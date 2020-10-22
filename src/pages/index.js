@@ -1,21 +1,45 @@
 import React from "react";
-import { Link } from "gatsby";
 
 import Layout from "../components/layout";
-import Image from "../components/image";
 import SEO from "../components/seo";
 
 const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
+    {/* Hero */}
+    <section>
+      {/* name container */}
+      <div>
+        {/* title */}
+        <div>Juniper</div>
+        {/* subtitle */}
+        <code>software.engineer();</code>
+      </div>
+    </section>
+    {/* Hire me */}
+    <section>
+      <h2>Looking for help? Add me to your project.</h2>
+      <code>{`import { Juniper } from "june.a.bloom@gmail.com";`}</code>
+    </section>
+    {/* Blog */}
+    <section>
+      <h2>Read my documentation.</h2>
+      <ul>
+        <li>Is This a Blog Post? Yes This Is a Blog Post.</li>
+        <li>Is This a Blog Post? Yes This Is a Blog Post.</li>
+        <li>Is This a Blog Post? Yes This Is a Blog Post.</li>
+        <li>See more</li>
+      </ul>
+    </section>
+    {/* Projects */}
+    <section>
+      <h2>Explore my source code.</h2>
+      <ul>
+        <li>Project</li>
+        <li>Project</li>
+        <li>Project</li>
+      </ul>
+    </section>
   </Layout>
 );
 
