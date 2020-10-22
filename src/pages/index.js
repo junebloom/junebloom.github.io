@@ -7,13 +7,13 @@ const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
     {/* Hero */}
-    <section>
+    <section className="w-full h-screen relative flex justify-center items-center">
       {/* name container */}
-      <div>
+      <div className="flex flex-col">
         {/* title */}
-        <div>Juniper</div>
+        <div className="text-6xl font-black">Juniper</div>
         {/* subtitle */}
-        <code>software.engineer();</code>
+        <code className="text-right">software.engineer();</code>
       </div>
     </section>
     {/* Hire me */}
