@@ -27,8 +27,8 @@ const Layout = ({ children }) => {
     <>
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
       <main>{children}</main>
-      <footer>
-        🄯 {new Date().getFullYear()} everyone; All wrongs reversed.
+      <footer className="mb-8 mt-24 text-center text-sm font-bold">
+        🄯 {new Date().getFullYear()} Everyone; All wrongs reversed.
       </footer>
     </>
   );
