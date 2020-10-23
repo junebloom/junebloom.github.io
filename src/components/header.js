@@ -22,10 +22,12 @@ const Header = ({ siteTitle }) => {
 
   return (
     <header className={className}>
-      <Link to="/" className="font-black">
+      <Link to="/" className="text-2xl leading-none font-black text-indigo-500">
         j
       </Link>
-      <Link to="#">menu</Link>
+      <Link to="#" className="text-indigo-500">
+        menu
+      </Link>
     </header>
   );
 };
