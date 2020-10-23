@@ -7,9 +7,26 @@ const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
     {/* Hero */}
-    <section className="w-full h-screen relative flex justify-center items-center">
+    <section className="overflow-visible w-full h-screen relative flex justify-center items-center">
+      {/* background shapes */}
+      <div
+        className="absolute bg-red-500"
+        style={{
+          width: "80vw",
+          height: "60vw",
+          transform: "translate(-35%, -32%) rotate(-30deg)",
+        }}
+      />
+      <div
+        className="absolute bg-indigo-500"
+        style={{
+          width: "80vw",
+          height: "60vw",
+          transform: "translate(-50%, -90%) rotate(-30deg)",
+        }}
+      />
       {/* name container */}
-      <div className="flex flex-col">
+      <div className="z-10 flex flex-col">
         {/* title */}
         <div className="text-6xl font-black">juniper</div>
         {/* subtitle */}
@@ -18,7 +35,7 @@ const IndexPage = () => (
     </section>
 
     {/* Content */}
-    <div className="max-w-screen-md mx-auto px-4 space-y-24">
+    <div className="relative max-w-screen-md mx-auto px-4 space-y-24">
       {/* Hire me */}
       <section className="flex flex-col space-y-2">
         <h2 className="font-bold p-2">
