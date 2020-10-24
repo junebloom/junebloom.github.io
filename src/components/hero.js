@@ -22,10 +22,7 @@ export const Hero = () => (
     {/* name container */}
     <div className="z-10 flex flex-col">
       {/* title */}
-      <div
-        className="font-black text-indigo-500"
-        style={{ "font-size": "6rem" }}
-      >
+      <div className="font-black text-indigo-500" style={{ fontSize: "6rem" }}>
         juniper
       </div>
       {/* subtitle */}
