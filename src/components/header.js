@@ -6,8 +6,8 @@ const Header = ({ siteTitle }) => {
   const [scrolled, setScrolled] = useState(false);
 
   function handleScroll() {
-    const { scrollTop } = document.scrollingElement;
-    if (scrolled !== scrollTop > 0) setScrolled(scrollTop > 0);
+    const isScrolled = document.scrollingElement.scrollTop > 0;
+    if (scrolled !== isScrolled) setScrolled(isScrolled);
   }
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const Header = ({ siteTitle }) => {
     };
   });
 
-  let className = `fixed z-50 w-full flex justify-between p-8 lg:bg-transparent`;
+  let className = `fixed z-50 w-full flex justify-between p-8 transition-colors duration-200 lg:bg-transparent`;
   if (scrolled) className += ` bg-white`;
 
   return (
