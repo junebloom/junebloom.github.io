@@ -1,4 +1,5 @@
 const { colors } = require("tailwindcss/defaultTheme");
+const { variants } = require("tailwindcss/defaultConfig");
 
 module.exports = {
   future: {
@@ -11,18 +12,21 @@ module.exports = {
       colors: {
         indigo: {
           ...colors.indigo,
-          100: "#EFEFFE",
-          500: "#6F75F6",
-          600: "#595EE6",
-          900: "#191EA2",
+          100: "#efeffe",
+          400: "#8a90ff",
+          500: "#6f75f6",
+          600: "#595ee6",
+          900: "#191ea2",
         },
         red: {
           ...colors.red,
-          400: "#FF79A1",
+          400: "#ff79a1",
         },
       },
     },
   },
-  variants: {},
+  variants: {
+    textColor: [...variants.textColor, "group-hover"],
+  },
   plugins: [],
 };
