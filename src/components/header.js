@@ -28,6 +28,12 @@ const Header = ({ siteTitle }) => {
       >
         j
       </Link>
+      <nav className="space-x-2 pointer-events-auto">
+        <Link to="/">Home</Link>
+        <Link to="/about">About</Link>
+        <Link to="/blog">Blog</Link>
+        <a href="https://github.com/junebloom">GitHub</a>
+      </nav>
     </header>
   );
 };
