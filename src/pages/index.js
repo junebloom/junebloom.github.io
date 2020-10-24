@@ -39,7 +39,7 @@ const IndexPage = () => (
 
       {/* Blog */}
       <Section title="Read my documentation.">
-        <ul className="list-inside list-disc ml-8 space-y-2">
+        <ul className="list-inside list-disc ml-8 space-y-2 text-red-400">
           <li>
             <Link to="/blog">Thoughts on Using React Without JSX</Link>
           </li>
@@ -92,7 +92,7 @@ const IndexPage = () => (
           />
           <Tile
             Icon={FiGithub}
-            title="See more"
+            title="See More"
             subtitle="at GitHub"
             href="https://github.com/junebloom"
           />
