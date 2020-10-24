@@ -47,18 +47,10 @@ const IndexPage = () => (
 
       {/* Projects */}
       <Section title="Explore my source code.">
-        <ul className="font-bold flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-          <Tile title="Scrawl" subtitle="World-building Tool" />
-          <Tile
-            title="Practical"
-            subtitle="Audio Recorder"
-            className="text-purple-500"
-          />
-          <Tile
-            title="Fae"
-            subtitle="Game Framework"
-            className="text-red-400"
-          />
+        <ul className="font-bold grid md:grid-cols-3 gap-2">
+          <Tile title="Practical" subtitle="Audio Recorder" />
+          <Tile title="Fae" subtitle="Game Framework" />
+          <Tile title="See more" subtitle="at GitHub" />
         </ul>
       </Section>
     </div>
