@@ -1,10 +1,5 @@
 import React from "react";
-
-import Layout from "../components/layout";
-import SEO from "../components/seo";
-import { Hero } from "../components/hero";
-import { Section } from "../components/section";
-import { Tile } from "../components/tile";
+import { Link } from "gatsby";
 import {
   FiBox,
   FiCode,
@@ -13,6 +8,12 @@ import {
   FiMic,
   FiShare2,
 } from "react-icons/fi";
+
+import Layout from "../components/layout";
+import SEO from "../components/seo";
+import { Hero } from "../components/hero";
+import { Section } from "../components/section";
+import { Tile } from "../components/tile";
 
 const IndexPage = () => (
   <Layout>
@@ -30,14 +31,7 @@ const IndexPage = () => (
           {" } "}
           <span className="text-indigo-600">from</span>{" "}
           <span className="text-red-400">
-            "
-            <a
-              href="mailto:june.a.bloom@gmail.com"
-              className="hover:text-red-500 hover:underline"
-            >
-              june.a.bloom@gmail.com
-            </a>
-            "
+            "<a href="mailto:june.a.bloom@gmail.com">june.a.bloom@gmail.com</a>"
           </span>
           ;
         </code>
@@ -45,11 +39,21 @@ const IndexPage = () => (
 
       {/* Blog */}
       <Section title="Read my documentation.">
-        <ul className="list-inside list-disc ml-8 space-y-2 font-bold text-red-400 underline">
-          <li>Is This a Blog Post? Yes This Is a Blog Post.</li>
-          <li>Is This a Blog Post? Yes This Is a Blog Post.</li>
-          <li>Is This a Blog Post? Yes This Is a Blog Post.</li>
-          <li>See more</li>
+        <ul className="list-inside list-disc ml-8 space-y-2">
+          <li>
+            <Link to="/blog">Experimenting With Not Using JSX in React</Link>
+          </li>
+          <li>
+            <Link to="/blog">Recording and Storing Audio in the Browser</Link>
+          </li>
+          <li>
+            <Link to="/blog">
+              How the Entity-Component-System Design Pattern Works
+            </Link>
+          </li>
+          <li>
+            <Link to="/blog">See more</Link>
+          </li>
         </ul>
       </Section>
 
