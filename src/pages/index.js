@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "gatsby";
 import {
-  FiBox,
-  FiCode,
-  FiGithub,
   FiMap,
+  FiBox,
   FiMic,
   FiShare2,
+  FiCode,
+  FiGithub,
 } from "react-icons/fi";
 
 import Layout from "../components/layout";
