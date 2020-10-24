@@ -1,17 +1,13 @@
 import React from "react";
 
-export const Tile = ({
-  title,
-  subtitle,
-  className = "border-indigo-500 text-indigo-500",
-}) => (
+export const Tile = ({ title, subtitle, className = "text-indigo-500" }) => (
   <li
-    className={`relative flex md:flex-col items-center md:justify-center flex-grow md:h-56 p-2 bg-indigo-100 ${className}`}
+    className={`flex-grow flex items-center md:grid grid-rows-3 space-x-4 md:space-x-0 md:h-56 p-4 bg-indigo-100 ${className}`}
   >
-    <span className={`m-2 w-16 h-16 border-4 rounded-full ${className}`}></span>
-    <div className="md:absolute md:bottom-0 flex flex-grow md:flex-col md:items-center justify-between md:text-center leading-none">
-      <div className="text-lg m-2 md:m-0">{title}</div>
-      <div className="font-medium m-2 md:m-0 md:mb-6">{subtitle}</div>
+    <span className="row-start-2 md:mx-auto w-16 h-16 border-4 rounded-full"></span>
+    <div className="row-start-3 flex-grow flex md:flex-col justify-between md:text-center leading-none">
+      <div className="text-lg">{title}</div>
+      <div className="font-medium">{subtitle}</div>
     </div>
   </li>
 );

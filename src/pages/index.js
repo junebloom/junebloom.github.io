@@ -52,12 +52,12 @@ const IndexPage = () => (
           <Tile
             title="Practical"
             subtitle="Audio Recorder"
-            className="border-purple-500 text-purple-500"
+            className="text-purple-500"
           />
           <Tile
             title="Fae"
             subtitle="Game Framework"
-            className="border-red-400 text-red-400"
+            className="text-red-400"
           />
         </ul>
       </Section>
