@@ -5,6 +5,14 @@ import SEO from "../components/seo";
 import { Hero } from "../components/hero";
 import { Section } from "../components/section";
 import { Tile } from "../components/tile";
+import {
+  FiBox,
+  FiCode,
+  FiGithub,
+  FiMap,
+  FiMic,
+  FiShare2,
+} from "react-icons/fi";
 
 const IndexPage = () => (
   <Layout>
@@ -49,16 +57,37 @@ const IndexPage = () => (
       <Section title="Explore my source code.">
         <ul className="font-bold grid md:grid-cols-3 gap-2">
           <Tile
+            Icon={FiMap}
+            title="Scrawl"
+            subtitle="World-building Tool"
+            href="https://github.com/junebloom/scrawl"
+          />
+          <Tile
+            Icon={FiBox}
+            title="Fae"
+            subtitle="ECS Framework"
+            href="https://github.com/junebloom/fae"
+          />
+          <Tile
+            Icon={FiMic}
             title="Practical"
             subtitle="Audio Recorder"
             href="https://github.com/junebloom/practical"
           />
           <Tile
-            title="Fae"
-            subtitle="Game Framework"
-            href="https://github.com/junebloom/fae"
+            Icon={FiShare2}
+            title="Adjacency List"
+            subtitle="Graph Data Structure"
+            href="https://github.com/junebloom/adjacency-list"
           />
           <Tile
+            Icon={FiCode}
+            title="This Site"
+            subtitle="Personal Page and Blog"
+            href="https://github.com/junebloom/junebloom.github.io"
+          />
+          <Tile
+            Icon={FiGithub}
             title="See more"
             subtitle="at GitHub"
             href="https://github.com/junebloom"
