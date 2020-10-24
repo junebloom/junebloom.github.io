@@ -21,7 +21,7 @@ const IndexPage = () => (
     <Hero />
 
     {/* Content */}
-    <div className="relative lg:z-20 max-w-screen-md mx-auto px-4 space-y-24">
+    <div className="max-w-screen-md mx-auto px-4 space-y-24">
       {/* Hire me */}
       <Section title="Looking for help? Add me to your project.">
         <code className="font-mono font-bold text-indigo-900 p-2 overflow-auto whitespace-no-wrap bg-indigo-100">
@@ -41,7 +41,7 @@ const IndexPage = () => (
       <Section title="Read my documentation.">
         <ul className="list-inside list-disc ml-8 space-y-2">
           <li>
-            <Link to="/blog">Experimenting With Not Using JSX in React</Link>
+            <Link to="/blog">Thoughts on Using React Without JSX</Link>
           </li>
           <li>
             <Link to="/blog">Recording and Storing Audio in the Browser</Link>

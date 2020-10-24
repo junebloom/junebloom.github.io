@@ -17,16 +17,16 @@ const Header = ({ siteTitle }) => {
     };
   });
 
-  let className = `fixed z-20 w-full flex justify-between p-8 transition-colors duration-200 lg:bg-transparent`;
+  let className = `fixed z-20 w-full flex justify-between p-8 transition-colors duration-200 xl:bg-transparent xl:pointer-events-none`;
   if (scrolled) className += ` bg-white`;
 
   return (
     <header className={className}>
-      <Link to="/" className="text-2xl leading-none font-black text-indigo-500">
+      <Link
+        to="/"
+        className="text-2xl leading-none font-black text-indigo-500 pointer-events-auto"
+      >
         j
-      </Link>
-      <Link to="#" className="text-indigo-500">
-        menu
       </Link>
     </header>
   );
