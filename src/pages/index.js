@@ -48,9 +48,21 @@ const IndexPage = () => (
       {/* Projects */}
       <Section title="Explore my source code.">
         <ul className="font-bold grid md:grid-cols-3 gap-2">
-          <Tile title="Practical" subtitle="Audio Recorder" />
-          <Tile title="Fae" subtitle="Game Framework" />
-          <Tile title="See more" subtitle="at GitHub" />
+          <Tile
+            title="Practical"
+            subtitle="Audio Recorder"
+            href="https://github.com/junebloom/practical"
+          />
+          <Tile
+            title="Fae"
+            subtitle="Game Framework"
+            href="https://github.com/junebloom/fae"
+          />
+          <Tile
+            title="See more"
+            subtitle="at GitHub"
+            href="https://github.com/junebloom"
+          />
         </ul>
       </Section>
     </div>
