@@ -17,7 +17,7 @@ const Header = ({ siteTitle }) => {
     };
   });
 
-  let className = `fixed z-50 w-full flex justify-between p-8 transition-colors duration-200 lg:bg-transparent`;
+  let className = `fixed z-50 lg:z-0 w-full flex justify-between p-8 transition-colors duration-200 lg:bg-transparent`;
   if (scrolled) className += ` bg-white`;
 
   return (
