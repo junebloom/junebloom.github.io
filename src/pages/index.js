@@ -12,7 +12,7 @@ const IndexPage = () => (
     <Hero />
 
     {/* Content */}
-    <div className="relative max-w-screen-md mx-auto px-4 space-y-24">
+    <div className="relative lg:z-20 max-w-screen-md mx-auto px-4 space-y-24">
       {/* Hire me */}
       <Section title="Looking for help? Add me to your project.">
         <code className="font-mono font-bold text-indigo-900 p-2 overflow-auto whitespace-no-wrap bg-indigo-100">
