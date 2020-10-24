@@ -11,7 +11,7 @@
     "gatsby"
   ],
   "private": true,
-  "license": "0BSD",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "gatsby": "^2.24.85",
     "gatsby-image": "^2.4.21",
