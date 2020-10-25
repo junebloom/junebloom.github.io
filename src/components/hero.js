@@ -1,5 +1,7 @@
 import React from "react";
 
+import juniper from "../images/juniper.svg";
+
 export const Hero = () => (
   <section className="overflow-visible w-full h-screen relative flex justify-center items-center">
     {/* background shapes */}
@@ -20,11 +22,9 @@ export const Hero = () => (
       }}
     />
     {/* name container */}
-    <div className="relative flex flex-col">
+    <div className="relative flex flex-col space-y-2 mt-24">
       {/* title */}
-      <div className="font-black text-indigo-500" style={{ fontSize: "6rem" }}>
-        juniper
-      </div>
+      <img src={juniper} />
       {/* subtitle */}
       <code className="text-right font-mono font-bold text-indigo-600">
         software.engineer();
