@@ -24,13 +24,13 @@ const Layout = ({ children }) => {
   `);
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
-      <main>{children}</main>
+      <main className="flex-grow flex flex-col items-stretch">{children}</main>
       <footer className="m-16 text-center text-sm text-indigo-400 font-bold">
         🄯 {new Date().getFullYear()} Everyone; All wrongs reversed.
       </footer>
-    </>
+    </div>
   );
 };
 
