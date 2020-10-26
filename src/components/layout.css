@@ -2,11 +2,17 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@layer utilities {
+  .text-decoration-2 {
+    text-decoration-thickness: 2px;
+  }
+}
+
 @layer base {
   a {
     @apply font-bold text-red-400;
   }
   a:hover {
-    @apply text-red-500 underline;
+    @apply text-red-500 underline text-decoration-2;
   }
 }
