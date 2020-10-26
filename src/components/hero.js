@@ -27,7 +27,7 @@ export const Hero = () => (
       {/* title */}
       <Juniper className="hero-fade-in" />
       {/* subtitle */}
-      <code className="text-right font-mono font-bold text-indigo-600">
+      <code className="text-right font-mono font-bold text-indigo-600 hero-fade-in-subtitle">
         software.engineer();
       </code>
     </div>
