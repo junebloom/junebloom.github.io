@@ -21,12 +21,12 @@
 }
 .hero-fade-in {
   overflow: visible;
+  --delay: 250ms;
 }
 .hero-fade-in > path {
   opacity: 0;
   transform-origin: center;
   animation: hero-zoom-in 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  --delay: 500ms;
 }
 .hero-fade-in > path:nth-child(1) {
   animation-delay: var(--delay);
@@ -57,8 +57,8 @@
   animation-name: hero-drop-in;
   animation-delay: calc(var(--delay) + 2s);
 }
-.hero-fade-in-subtitle {
+.hero-fade-in--subtitle {
   opacity: 0;
   animation: hero-drop-in 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-delay: 3s;
+  animation-delay: calc(var(--delay) + 2.5s);
 }
