@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { Link } from "gatsby";
 
 import logo from "../images/logo-square.svg";
 
-const Header = ({ siteTitle }) => {
+export function Header() {
   const [scrolled, setScrolled] = useState(false);
 
   function handleScroll() {
@@ -39,14 +38,4 @@ const Header = ({ siteTitle }) => {
       </nav>
     </header>
   );
-};
-
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-};
-
-Header.defaultProps = {
-  siteTitle: ``,
-};
-
-export default Header;
+}

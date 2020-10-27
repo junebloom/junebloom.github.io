@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Juniper = ({ className }) => (
+export const JuniperSVG = ({ className }) => (
   <svg
     width={330}
     height={89}

@@ -1,7 +1,7 @@
 import React from "react";
 
-import { Juniper } from "./juniper.svg.js";
-import "./hero.css";
+import { JuniperSVG } from "./JuniperSVG.js";
+import "./Hero.css";
 
 export const Hero = () => (
   <section className="overflow-visible w-full h-screen relative flex justify-center items-center">
@@ -25,7 +25,7 @@ export const Hero = () => (
     {/* name container */}
     <div className="relative flex flex-col space-y-2 mt-24">
       {/* title */}
-      <Juniper className="hero-fade-in" />
+      <JuniperSVG className="hero-fade-in" />
       {/* subtitle */}
       <code className="text-right font-mono font-bold text-indigo-600 hero-fade-in hero-fade-in--subtitle">
         software.engineer();

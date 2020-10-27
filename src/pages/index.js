@@ -9,11 +9,11 @@ import {
   FiGithub,
 } from "react-icons/fi";
 
-import Layout from "../components/layout";
-import SEO from "../components/seo";
-import { Hero } from "../components/hero";
-import { Section } from "../components/section";
-import { Tile } from "../components/tile";
+import { Layout } from "../components/Layout/Layout.js";
+import { SEO } from "../components/SEO.js";
+import { Hero } from "../components/Hero/Hero.js";
+import { Section } from "../components/Section.js";
+import { Tile } from "../components/Tile.js";
 
 const IndexPage = () => (
   <Layout>
