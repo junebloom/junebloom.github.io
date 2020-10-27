@@ -28,7 +28,7 @@ const Layout = ({ children }) => {
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
       <main className="flex-grow flex flex-col items-stretch">{children}</main>
       <footer className="m-16 text-center text-sm text-indigo-400 font-bold">
-        🄯 {new Date().getFullYear()} Everyone; All wrongs reversed.
+        🄯 {new Date().getFullYear()} - All wrongs reversed.
       </footer>
     </div>
   );
