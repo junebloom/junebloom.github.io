@@ -35,7 +35,7 @@ const AboutPage = () => {
             <Img
               className="rounded-full"
               fixed={data.file.childImageSharp.fixed}
-              alt="A picture of Juniper. She has curly brown hair with bangs, and is wearing glasses and a striped turtleneck."
+              alt="A photo of Juniper. She has curly brown hair with bangs, and is wearing glasses and a striped turtleneck."
             />
           </div>
           <h1 className="text-6xl font-black leading-none text-indigo-500">

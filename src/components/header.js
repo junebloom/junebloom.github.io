@@ -25,7 +25,11 @@ const Header = ({ siteTitle }) => {
   return (
     <header className={className}>
       <Link to="/" className="pointer-events-auto bg-white rounded-full">
-        <img src={logo} className="w-8 h-8 m-4" />
+        <img
+          src={logo}
+          className="w-8 h-8 m-4"
+          alt="Logo with an indigo square imposed over a blush square"
+        />
       </Link>
       <nav className="space-x-2 pointer-events-auto m-4">
         <Link to="/">Home</Link>
