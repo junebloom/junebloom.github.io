@@ -22,12 +22,22 @@ const AboutPage = () => {
     <Layout>
       <SEO title="About" />
       <div className="max-w-screen-md w-full self-center px-4 mt-32 text-indigo-900">
-        <div className="text-center space-y-4 my-4">
-          <Img
-            className="rounded-full"
-            fixed={data.file.childImageSharp.fixed}
-            alt="A picture of Juniper. She has curly brown hair with bangs, and is wearing glasses and a striped turtleneck."
-          />
+        <div className="flex flex-col items-center text-center space-y-4 my-4">
+          <div className="flex relative">
+            <div
+              className="absolute bg-red-400 w-full h-full rounded-full"
+              style={{ transform: "rotate(-30deg) translateY(0.5rem)" }}
+            />
+            <div
+              className="absolute bg-indigo-500 w-full h-full rounded-full"
+              style={{ transform: "rotate(-30deg) translateY(-0.5rem)" }}
+            />
+            <Img
+              className="rounded-full"
+              fixed={data.file.childImageSharp.fixed}
+              alt="A picture of Juniper. She has curly brown hair with bangs, and is wearing glasses and a striped turtleneck."
+            />
+          </div>
           <h1 className="text-6xl font-black leading-none text-indigo-500">
             Juniper Bloom
           </h1>
