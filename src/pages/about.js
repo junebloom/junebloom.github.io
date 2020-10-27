@@ -47,8 +47,8 @@ const AboutPage = () => {
           <p>
             My name is Juniper, of course, and you can refer to me using either
             she/her or they/them pronouns. I'm a programmer with a particular
-            love for the web and building useful tools that empower people to
-            express themselves.
+            love for the web and for building lightweight tools that empower
+            people to express themselves.
           </p>
           <p>
             I believe that cooperation is the most efficient way to make
