@@ -29,5 +29,5 @@ module.exports = {
   variants: {
     textColor: [...variants.textColor, "group-hover"],
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };
