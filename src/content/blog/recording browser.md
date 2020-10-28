@@ -1,6 +1,5 @@
 ---
 title: Recording and Storing Audio in the Browser
-slug: recording-and-storing-audio-in-the-browser
 date: 2020-10-31
 published: true
 ---

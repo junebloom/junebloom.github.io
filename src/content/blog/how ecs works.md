@@ -1,6 +1,5 @@
 ---
 title: How the Entity-Component-System Design Pattern Works
-slug: how-the-entity-component-system-design-pattern-works
 date: 2020-10-27
 published: true
 ---

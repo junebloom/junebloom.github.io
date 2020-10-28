@@ -1,3 +1,20 @@
+const slugify = require("slugify");
+
+// Generate metadata for blog posts
+exports.onCreateNode = ({ node, actions }) => {
+  const { createNodeField } = actions;
+  if (node.internal.type === "MarkdownRemark") {
+    const slug = slugify(node.frontmatter.title, { lower: true });
+
+    createNodeField({
+      node,
+      name: "slug",
+      value: `/blog/${slug}`,
+    });
+  }
+};
+
+// Generate blog post pages
 exports.createPages = async ({ actions, graphql }) => {
   const { createPage } = actions;
 
@@ -11,7 +28,7 @@ exports.createPages = async ({ actions, graphql }) => {
         }
       ) {
         nodes {
-          frontmatter {
+          fields {
             slug
           }
         }
@@ -20,9 +37,9 @@ exports.createPages = async ({ actions, graphql }) => {
   `);
 
   data.allMarkdownRemark.nodes.forEach((post) => {
-    const slug = post.frontmatter.slug;
+    const slug = post.fields.slug;
     createPage({
-      path: `/blog/${slug}`,
+      path: slug,
       component: require.resolve("./src/templates/BlogPostTemplate.js"),
       context: { slug },
     });

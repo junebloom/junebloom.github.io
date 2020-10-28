@@ -5,7 +5,7 @@ import { formatInteger } from "./formatInteger.js";
 export const BlogPostPreview = ({ title, slug, date, timeToRead, excerpt }) => (
   <div className="flex flex-col items-center text-center space-y-4">
     <Link
-      to={`/blog/${slug}`}
+      to={slug}
       className="text-5xl font-black leading-none text-indigo-500 max-w-lg"
     >
       {title}
@@ -18,7 +18,7 @@ export const BlogPostPreview = ({ title, slug, date, timeToRead, excerpt }) => (
     </div>
 
     <p className="text-left leading-7 text-indigo-900">
-      {excerpt} <Link to={`/blog/${slug}`}>read more</Link>
+      {excerpt} <Link to={slug}>read more</Link>
     </p>
   </div>
 );

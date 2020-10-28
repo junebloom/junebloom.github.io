@@ -7,7 +7,7 @@ import { BlogPost } from "../components/BlogPost/BlogPost.js";
 
 export const query = graphql`
   query($slug: String!) {
-    markdownRemark(frontmatter: { slug: { eq: $slug } }) {
+    markdownRemark(fields: { slug: { eq: $slug } }) {
       frontmatter {
         title
         date(formatString: "YYYY-MM-DD")

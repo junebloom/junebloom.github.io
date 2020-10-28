@@ -1,6 +1,5 @@
 ---
 title: Thoughts on Using React Without JSX
-slug: thoughts-on-using-react-without-jsx
 date: 2020-10-30
 published: true
 ---
