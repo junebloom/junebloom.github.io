@@ -63,7 +63,7 @@ const IndexPage = () => {
         <Section title="Read my documentation.">
           <ul className="list-inside list-disc ml-8 space-y-2 text-red-400">
             {data.allMarkdownRemark.nodes.map((post) => (
-              <li>
+              <li key={post.fields.slug}>
                 <Link to={post.fields.slug}>{post.frontmatter.title}</Link>
               </li>
             ))}
