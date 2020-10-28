@@ -2,7 +2,7 @@ import React from "react";
 import { formatInteger } from "./formatInteger.js";
 import "./prism-theme.css";
 
-export const BlogPost = ({ title, slug, date, timeToRead, children }) => (
+export const BlogPost = ({ title, date, timeToRead, html }) => (
   <div className="flex flex-col items-center text-center space-y-4">
     <h1 className="text-5xl font-black leading-none text-indigo-500 max-w-lg">
       {title}
@@ -14,6 +14,9 @@ export const BlogPost = ({ title, slug, date, timeToRead, children }) => (
       <span>{`${formatInteger(timeToRead)} minute read`}</span>
     </div>
 
-    <div className="text-left leading-7 text-indigo-900">{children}</div>
+    <div
+      className="text-left leading-7 text-indigo-900"
+      dangerouslySetInnerHTML={{ __html: html }}
+    ></div>
   </div>
 );
