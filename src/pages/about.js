@@ -7,7 +7,7 @@ import { SEO } from "../components/SEO.js";
 
 const AboutPage = () => {
   const data = useStaticQuery(graphql`
-    query AboutPageQuery {
+    query {
       file(relativePath: { eq: "avatar2.jpg" }) {
         childImageSharp {
           fixed(width: 360) {

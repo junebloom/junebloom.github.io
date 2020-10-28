@@ -7,7 +7,7 @@ import { BlogPostPreview } from "../components/BlogPost/BlogPostPreview.js";
 
 const BlogPage = () => {
   const data = useStaticQuery(graphql`
-    query BlogPostsQuery {
+    query {
       allMarkdownRemark(
         filter: { fileAbsolutePath: { glob: "**/content/blog/*" } }
         sort: { fields: frontmatter___date, order: DESC }
