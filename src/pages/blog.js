@@ -1,10 +1,9 @@
 import React from "react";
 import { useStaticQuery, graphql } from "gatsby";
-import { formatInteger } from "../utils/formatInteger.js";
 
-import { Link } from "gatsby";
 import { Layout } from "../components/Layout/Layout.js";
 import { SEO } from "../components/SEO.js";
+import { BlogPostPreview } from "../components/BlogPost/BlogPostPreview.js";
 
 const BlogPage = () => {
   const data = useStaticQuery(graphql`
@@ -32,31 +31,18 @@ const BlogPage = () => {
   return (
     <Layout>
       <SEO title="Blog" />
-      <div className="max-w-screen-md w-full self-center px-4 mt-32">
-        <ul className="text-indigo-900 space-y-24">
+      <div className="self-center max-w-screen-md w-full px-4 mt-32">
+        <ul className="space-y-24">
           {data.allMarkdownRemark.nodes.map(
             ({ frontmatter, timeToRead, excerpt }) => (
-              <li
-                key={frontmatter.slug}
-                className="flex flex-col items-center text-center space-y-4"
-              >
-                <Link
-                  to={`/blog/${frontmatter.slug}`}
-                  className="text-5xl font-black leading-none text-indigo-500 max-w-lg"
-                >
-                  {frontmatter.title}
-                </Link>
-
-                <div className="space-x-2 text-xl text-indigo-400">
-                  <span>{frontmatter.date}</span>
-                  <span>·</span>
-                  <span>{`${formatInteger(timeToRead)} minute read`}</span>
-                </div>
-
-                <p className="text-left leading-7">
-                  {excerpt}{" "}
-                  <Link to={`/blog/${frontmatter.slug}`}>read more</Link>
-                </p>
+              <li key={frontmatter.slug}>
+                <BlogPostPreview
+                  title={frontmatter.title}
+                  slug={frontmatter.slug}
+                  date={frontmatter.date}
+                  timeToRead={timeToRead}
+                  excerpt={excerpt}
+                />
               </li>
             )
           )}
