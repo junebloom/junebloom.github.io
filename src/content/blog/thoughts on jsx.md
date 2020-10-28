@@ -1,7 +1,6 @@
 ---
 title: Thoughts on Using React Without JSX
 date: 2020-10-30
-published: true
 ---
 
 This is a _blog post_ with [markdown](#markdown-is-cool).

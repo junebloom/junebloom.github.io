@@ -1,7 +1,6 @@
 ---
 title: Recording and Storing Audio in the Browser
 date: 2020-10-31
-published: true
 ---
 
 This is a _blog post_ with [markdown](#markdown-is-cool).

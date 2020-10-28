@@ -9,10 +9,7 @@ const BlogPage = () => {
   const data = useStaticQuery(graphql`
     query BlogPostsQuery {
       allMarkdownRemark(
-        filter: {
-          fileAbsolutePath: { glob: "**/content/blog/*" }
-          frontmatter: { published: { eq: true } }
-        }
+        filter: { fileAbsolutePath: { glob: "**/content/blog/*" } }
         sort: { fields: frontmatter___date, order: DESC }
       ) {
         nodes {
