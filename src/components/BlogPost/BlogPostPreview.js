@@ -18,7 +18,7 @@ export const BlogPostPreview = ({ title, slug, date, timeToRead, excerpt }) => (
     </div>
 
     <p className="text-left leading-7 text-indigo-900">
-      {excerpt} <Link to="/blog/slug">read more</Link>
+      {excerpt} <Link to={`/blog/${slug}`}>read more</Link>
     </p>
   </div>
 );
