@@ -10,7 +10,7 @@ const BlogPage = () => {
     query BlogPostsQuery {
       allMarkdownRemark(
         filter: {
-          fileAbsolutePath: { glob: "**/content/posts/*" }
+          fileAbsolutePath: { glob: "**/content/blog/*" }
           frontmatter: { published: { eq: true } }
         }
         sort: { fields: frontmatter___date, order: DESC }
