@@ -3,10 +3,10 @@ const { variants } = require("tailwindcss/defaultConfig");
 
 module.exports = {
   future: {
-    // removeDeprecatedGapUtilities: true,
-    // purgeLayersByDefault: true,
+    removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
   },
-  purge: [],
+  purge: ["./src/**/*.js"],
   theme: {
     extend: {
       colors: {
