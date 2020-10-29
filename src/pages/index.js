@@ -19,7 +19,7 @@ const IndexPage = () => {
   const data = useStaticQuery(graphql`
     query {
       allMarkdownRemark(
-        filter: { fileAbsolutePath: { glob: "**/content/blog/*" } }
+        filter: { fileAbsolutePath: { regex: "/blog/" } }
         sort: { fields: frontmatter___date, order: DESC }
         limit: 3
       ) {

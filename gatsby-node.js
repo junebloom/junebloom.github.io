@@ -21,9 +21,7 @@ exports.createPages = async ({ actions, graphql }) => {
   // Get blog post data
   const { data } = await graphql(`
     query {
-      allMarkdownRemark(
-        filter: { fileAbsolutePath: { glob: "**/content/blog/*" } }
-      ) {
+      allMarkdownRemark(filter: { fileAbsolutePath: { regex: "/blog/" } }) {
         nodes {
           fields {
             slug
