@@ -4,17 +4,21 @@ import { Link } from "gatsby";
 import logo from "../images/logo-square.svg";
 
 export function Header() {
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState();
 
-  function handleScroll() {
+  function updateScrolled() {
     const isScrolled = document.scrollingElement.scrollTop > 0;
     if (scrolled !== isScrolled) setScrolled(isScrolled);
   }
 
   useEffect(() => {
-    document.addEventListener("scroll", handleScroll);
+    // Ensure the correct value is set if the page loaded pre-scrolled.
+    updateScrolled();
+
+    // Handle subsequent scrolls.
+    document.addEventListener("scroll", updateScrolled);
     return () => {
-      document.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("scroll", updateScrolled);
     };
   });
 
