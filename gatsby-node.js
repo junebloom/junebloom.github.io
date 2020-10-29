@@ -1,6 +1,6 @@
 const slugify = require("slugify");
 
-// Generate metadata for blog posts
+// Generate metadata for blog posts.
 exports.onCreateNode = ({ node, actions }) => {
   const { createNodeField } = actions;
   if (
@@ -17,14 +17,20 @@ exports.onCreateNode = ({ node, actions }) => {
   }
 };
 
-// Generate blog post pages
+// Generate blog post pages.
 exports.createPages = async ({ actions, graphql }) => {
   const { createPage } = actions;
 
-  // Get blog post data
+  // Get blog post data.
+  // This shouldn't need to be sorted for simply generating the pages,
+  // but somehow it breaks the sorting for subsequent queries when the
+  // sort is omitted here???
   const { data } = await graphql(`
     query {
-      allMarkdownRemark(filter: { fileAbsolutePath: { regex: "/blog/" } }) {
+      allMarkdownRemark(
+        filter: { fileAbsolutePath: { regex: "/blog/" } }
+        sort: { fields: frontmatter___date, order: DESC }
+      ) {
         nodes {
           fields {
             slug
