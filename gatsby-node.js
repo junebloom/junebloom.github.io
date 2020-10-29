@@ -3,7 +3,10 @@ const slugify = require("slugify");
 // Generate metadata for blog posts
 exports.onCreateNode = ({ node, actions }) => {
   const { createNodeField } = actions;
-  if (node.internal.type === "MarkdownRemark") {
+  if (
+    node.internal.type === "MarkdownRemark" &&
+    node.fileAbsolutePath.includes("/blog/")
+  ) {
     const slug = slugify(node.frontmatter.title, { lower: true });
 
     createNodeField({
