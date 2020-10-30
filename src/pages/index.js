@@ -44,12 +44,12 @@ const IndexPage = () => {
       <div className="max-w-screen-md w-full self-center px-4 space-y-24">
         {/* Hire me */}
         <Section title="Looking for help? Add me to your project.">
-          <code className="font-mono font-bold text-indigo-900 p-2 overflow-auto whitespace-no-wrap bg-indigo-100">
-            <span className="text-indigo-600">import</span>
+          <code className="font-mono font-bold text-indigo-400 overflow-auto whitespace-no-wrap p-3 rounded-sm bg-indigo-100">
+            <span className="text-indigo-500">import</span>
             {" { "}
-            <span className="text-indigo-500">Juniper</span>
+            <span className="text-indigo-600">Juniper</span>
             {" } "}
-            <span className="text-indigo-600">from</span>{" "}
+            <span className="text-indigo-500">from</span>{" "}
             <span className="text-red-400">
               "
               <a href="mailto:june.a.bloom@gmail.com">june.a.bloom@gmail.com</a>

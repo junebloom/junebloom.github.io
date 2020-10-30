@@ -4,7 +4,7 @@ export const Tile = ({ Icon, title, subtitle, href }) => (
   <li>
     <a
       href={href}
-      className="flex items-center md:grid grid-rows-3 gap-4 md:gap-0 p-4 md:h-56 hover:no-underline bg-indigo-100 text-indigo-600 hover:bg-red-400 hover:text-white group"
+      className="flex items-center md:grid grid-rows-3 gap-4 md:gap-0 p-4 md:h-56 hover:no-underline rounded-sm bg-indigo-100 text-indigo-600 hover:bg-red-400 hover:text-white group"
     >
       <div className="row-start-2 md:mx-auto text-2xl">
         <Icon />

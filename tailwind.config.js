@@ -10,6 +10,7 @@ module.exports = {
     typography: (theme) => ({
       default: {
         css: {
+          color: "#464A81",
           h1: {
             color: theme("colors.indigo.500"),
             fontSize: theme("fontSize.5xl"),
@@ -42,8 +43,12 @@ module.exports = {
             marginTop: theme("spacing.8"),
             marginBottom: theme("spacing.4"),
           },
+          p: {
+            marginTop: theme("spacing.5"),
+            marginBottom: theme("spacing.5"),
+          },
           strong: {
-            color: theme("colors.indigo.900"),
+            color: theme("colors.indigo.700"),
           },
           a: {
             color: theme("colors.red.400"),
@@ -58,6 +63,7 @@ module.exports = {
             color: theme("colors.indigo.500"),
             background: theme("colors.indigo.200"),
             borderLeftColor: theme("colors.indigo.500"),
+            borderRadius: theme("borderRadius.sm"),
             padding: theme("spacing.4"),
             p: {
               margin: "0",
@@ -66,6 +72,7 @@ module.exports = {
           code: {
             background: theme("colors.indigo.100"),
             color: theme("colors.indigo.600"),
+            fontWeight: theme("fontWeight.normal"),
             borderRadius: theme("borderRadius.default"),
             padding: theme("spacing.1"),
           },

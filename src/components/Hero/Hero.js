@@ -27,7 +27,7 @@ export const Hero = () => (
       {/* title */}
       <JuniperSVG className="hero-fade-in" />
       {/* subtitle */}
-      <code className="text-right font-mono font-bold text-indigo-600 hero-fade-in hero-fade-in--subtitle">
+      <code className="text-right font-mono font-bold text-indigo-500 hero-fade-in hero-fade-in--subtitle">
         software.engineer();
       </code>
     </div>
