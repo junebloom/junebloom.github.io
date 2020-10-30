@@ -31,7 +31,7 @@ _(What is our object spreading in to, exactly? An implied object literal that wi
 
 Instead of forcing my components to fit into JSX, I tried dropping JSX entirely. This also let me stay closer to the original no-build-step spirit of the project. And it turns out that I had almost no problems foregoing JSX. For application UI, it felt totally natural to write and consume components using plain JS.
 
-_**But** this doesn't mean that this will always be the case, or that JSX is bad._ In fact, I think JSX is a very good solution for its problem domain, and virtually every React application benefits from it. In practice, the quirks mentioned above are only problematic in narrow circumstances, and using plain `createElement` calls can only scale so far before becoming unwieldy.
+_But this doesn't mean that this will always be the case, or that JSX is bad._ In fact, I think JSX is a very good solution for its problem domain, and virtually every React application benefits from it. In practice, the quirks mentioned above are only problematic in narrow circumstances, and using plain `createElement` calls can only scale so far before becoming unwieldy.
 
 For example, a good use-case for JSX is in the [Footer component](https://github.com/junebloom/practical/blob/develop/src/components/Footer.js) of my app. It is an area that makes use of nested hypertext elements, and I had to simplify its layout to keep the code readable. Writing such components using some kind of domain-specific HyperTextMarkupLanguage-based syntax would be great!
 
@@ -97,10 +97,10 @@ While writing this, I started to wonder about something else as well. What does 
 
 [React's docs](https://reactjs.org/docs/introducing-jsx.html#why-jsx) give some basic justifications for JSX, and the [JSX specification](https://facebook.github.io/jsx/) gives some slightly more nuanced justifications, particularly regarding the alternative of template literals, but neither explains the rationale for the name itself.
 
-Is it JSX*(tension)*? JSX*(ML)*? Something else? The spec states:
+Is it **J**avascript **S**yntax e**X**tension? **J**ava**S**cript e**X**tension? **J**ava**S**cript **X**ML? Something else?
+
+The spec states:
 
 > JSX is an XML-like syntax extension to ECMAScript without any defined semantics.
 
-Maybe it is the case that, like the extension itself, the name has no defined semantics.
-
-It's just JSX.
+Maybe it is the case that, like the extension itself, the name has no defined semantics. It's just JSX.
