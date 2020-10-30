@@ -3,35 +3,35 @@
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #abaedf;
+  @apply text-indigo-400;
 }
 
 .token.punctuation {
-  color: #b4b5ff;
+  color: #8187fb;
 }
 
 .token.tag,
 .token.namespace,
 .token.deleted {
-  color: #ff6191;
+  @apply text-red-500;
 }
 
 .token.function-name,
 .token.function {
-  color: #57bcff;
+  color: #338bff;
 }
 
 .token.attr-name,
 .token.boolean,
 .token.number {
-  color: #f69233;
+  color: #ff813d;
 }
 
 .token.property,
 .token.class-name,
 .token.constant,
 .token.symbol {
-  color: #cc5eff;
+  color: #b433ff;
 }
 
 .token.selector,
@@ -39,21 +39,22 @@
 .token.atrule,
 .token.keyword,
 .token.builtin {
-  color: #ff74dc;
+  color: #ff4dd2;
 }
 
 .token.string,
 .token.char,
 .token.attr-value,
 .token.regex,
-.token.variable {
-  color: #52da74;
+.token.variable,
+.token.inserted {
+  color: #1bc058;
 }
 
 .token.operator,
 .token.entity,
 .token.url {
-  color: #94bcdd;
+  color: #ca8ee1;
 }
 
 .token.important,
@@ -66,8 +67,4 @@
 
 .token.entity {
   cursor: help;
-}
-
-.token.inserted {
-  color: #52da74;
 }
