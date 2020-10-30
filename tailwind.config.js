@@ -43,6 +43,9 @@ module.exports = {
             marginTop: theme("spacing.8"),
             marginBottom: theme("spacing.4"),
           },
+          strong: {
+            color: theme("colors.indigo.900"),
+          },
           a: {
             color: theme("colors.red.400"),
             textDecorationLine: "none",
