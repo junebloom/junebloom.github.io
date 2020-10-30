@@ -26,17 +26,9 @@ const AboutPage = () => {
       <SEO title="About" />
       <div className="max-w-screen-md w-full self-center px-4 mt-32 text-indigo-900">
         <div className="flex flex-col items-center text-center space-y-4 my-4">
-          <div className="flex relative">
-            <div
-              className="absolute bg-red-400 w-full h-full rounded-full"
-              style={{ transform: "rotate(-30deg) translateY(0.5rem)" }}
-            />
-            <div
-              className="absolute bg-indigo-500 w-full h-full rounded-full"
-              style={{ transform: "rotate(-30deg) translateY(-0.5rem)" }}
-            />
+          <div className="border-indigo-400 border-8 border-dashed p-4">
             <Img
-              className="rounded-full"
+              className="rounded"
               fixed={data.file.childImageSharp.fixed}
               alt="A photo of Juniper. She has curly brown hair with bangs, and is wearing glasses and a striped turtleneck."
             />
