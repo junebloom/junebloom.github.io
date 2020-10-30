@@ -57,9 +57,30 @@ module.exports = {
             background: theme("colors.indigo.100"),
             borderLeftColor: theme("colors.indigo.500"),
             padding: theme("spacing.4"),
-            "& p": {
+            p: {
               margin: "0",
             },
+          },
+          code: {
+            background: "#f4f4ff",
+            color: "#9399ff",
+            fontWeight: theme("fontWeight.semibold"),
+            borderRadius: theme("borderRadius.default"),
+            padding: theme("spacing.1"),
+          },
+          "code::before": {
+            content: "none",
+          },
+          "code::after": {
+            content: "none",
+          },
+          pre: {
+            background: "#f4f4ff",
+            color: "#9399ff",
+            lineHeight: theme("lineHeight.normal"),
+          },
+          "pre code": {
+            fontWeight: theme("fontWeight.semibold"),
           },
         },
       },
