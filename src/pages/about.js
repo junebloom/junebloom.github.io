@@ -47,7 +47,7 @@ const AboutPage = () => {
           <h2 className="text-2xl text-indigo-400">- About Me -</h2>
         </div>
         <div
-          className="space-y-8 leading-7"
+          className="prose max-w-none"
           dangerouslySetInnerHTML={{ __html: data.markdownRemark.html }}
         ></div>
       </div>
