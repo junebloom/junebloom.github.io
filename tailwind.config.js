@@ -8,6 +8,57 @@ module.exports = {
   },
   purge: ["./src/**/*.js"],
   theme: {
+    typography: (theme) => ({
+      default: {
+        css: {
+          h1: {
+            color: theme("colors.indigo.500"),
+            fontSize: theme("fontSize.5xl"),
+            fontWeight: theme("fontWeight.black"),
+            lineHeight: theme("lineHeight.none"),
+            marginTop: theme("spacing.16"),
+            marginBottom: theme("spacing.8"),
+          },
+          h2: {
+            color: theme("colors.indigo.400"),
+            fontSize: theme("fontSize.3xl"),
+            fontWeight: theme("fontWeight.black"),
+            lineHeight: theme("lineHeight.none"),
+            marginTop: theme("spacing.12"),
+            marginBottom: theme("spacing.6"),
+          },
+          h3: {
+            color: theme("colors.indigo.500"),
+            fontSize: theme("fontSize.2xl"),
+            fontWeight: theme("fontWeight.normal"),
+            lineHeight: theme("lineHeight.none"),
+            marginTop: theme("spacing.8"),
+            marginBottom: theme("spacing.4"),
+          },
+          h4: {
+            color: theme("colors.indigo.600"),
+            fontSize: theme("fontSize.base"),
+            fontWeight: theme("fontWeight.bold"),
+            lineHeight: theme("lineHeight.none"),
+            marginTop: theme("spacing.8"),
+            marginBottom: theme("spacing.4"),
+          },
+          a: {
+            color: theme("colors.red.400"),
+            textDecorationLine: "none",
+            "&:hover": {
+              color: theme("colors.red.500"),
+              textDecorationLine: "underline",
+              textDecorationThickness: "2px",
+            },
+          },
+          blockquote: {
+            color: theme("colors.indigo.400"),
+            borderLeftColor: theme("colors.indigo.400"),
+          },
+        },
+      },
+    }),
     extend: {
       colors: {
         indigo: {
