@@ -3,7 +3,7 @@ import { Link } from "gatsby";
 import { formatInteger } from "./formatInteger.js";
 
 export const BlogPostPreview = ({ title, slug, date, timeToRead, excerpt }) => (
-  <div className="flex flex-col items-center text-center space-y-4">
+  <article className="flex flex-col items-center text-center space-y-4">
     <Link
       to={slug}
       className="text-5xl font-black leading-none text-indigo-500 max-w-lg"
@@ -17,8 +17,8 @@ export const BlogPostPreview = ({ title, slug, date, timeToRead, excerpt }) => (
       <span>{`${formatInteger(timeToRead)} minute read`}</span>
     </div>
 
-    <p className="text-left leading-7 text-indigo-900">
+    <p className="text-left prose max-w-none w-full">
       {excerpt} <Link to={slug}>read more</Link>
     </p>
-  </div>
+  </article>
 );
