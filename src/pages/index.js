@@ -1,10 +1,10 @@
 import React from "react";
 import { Link, useStaticQuery, graphql } from "gatsby";
 import {
-  FiMap,
+  // FiMap,
   FiBox,
   FiMic,
-  FiShare2,
+  // FiShare2,
   FiCode,
   FiGithub,
 } from "react-icons/fi";
@@ -76,12 +76,14 @@ const IndexPage = () => {
         {/* Projects */}
         <Section title="Explore my source code.">
           <ul className="font-bold grid md:grid-cols-3 gap-2">
+            {/*
             <Tile
               Icon={FiMap}
               title="Scrawl"
               subtitle="World-building Tool"
               href="https://github.com/junebloom/scrawl"
             />
+            */}
             <Tile
               Icon={FiBox}
               title="Fae"
@@ -94,12 +96,14 @@ const IndexPage = () => {
               subtitle="Audio Recorder"
               href="https://github.com/junebloom/practical"
             />
+            {/*             
             <Tile
               Icon={FiShare2}
               title="Adjacency List"
               subtitle="Graph Data Structure"
               href="https://github.com/junebloom/adjacency-list"
             />
+            */}
             <Tile
               Icon={FiCode}
               title="This Site"
