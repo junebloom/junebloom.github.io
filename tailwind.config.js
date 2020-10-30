@@ -53,8 +53,13 @@ module.exports = {
             },
           },
           blockquote: {
-            color: theme("colors.indigo.400"),
-            borderLeftColor: theme("colors.indigo.400"),
+            color: theme("colors.indigo.500"),
+            background: theme("colors.indigo.100"),
+            borderLeftColor: theme("colors.indigo.500"),
+            padding: theme("spacing.4"),
+            "& p": {
+              margin: "0",
+            },
           },
         },
       },
