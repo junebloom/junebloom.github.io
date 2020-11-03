@@ -68,7 +68,7 @@ const IndexPage = () => {
               </li>
             ))}
             <li>
-              <Link to="/blog">See more</Link>
+              <Link to="/blog/">See more</Link>
             </li>
           </ul>
         </Section>

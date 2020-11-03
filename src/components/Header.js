@@ -36,8 +36,8 @@ export function Header() {
       </Link>
       <nav className="space-x-2 pointer-events-auto m-4">
         <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-        <Link to="/blog">Blog</Link>
+        <Link to="/about/">About</Link>
+        <Link to="/blog/">Blog</Link>
         <a href="https://github.com/junebloom">GitHub</a>
       </nav>
     </header>
