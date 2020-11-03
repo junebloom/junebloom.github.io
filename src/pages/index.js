@@ -4,7 +4,7 @@ import {
   // FiMap,
   FiBox,
   FiMic,
-  // FiShare2,
+  FiShare2,
   FiCode,
   FiGithub,
 } from "react-icons/fi";
@@ -96,14 +96,12 @@ const IndexPage = () => {
               subtitle="Audio Recorder"
               href="https://github.com/junebloom/practical"
             />
-            {/*             
             <Tile
               Icon={FiShare2}
-              title="Adjacency List"
-              subtitle="Graph Data Structure"
-              href="https://github.com/junebloom/adjacency-list"
+              title="ScrawlGraph"
+              subtitle="Spatial Data Format"
+              href="https://github.com/junebloom/scrawlgraph"
             />
-            */}
             <Tile
               Icon={FiCode}
               title="This Site"
