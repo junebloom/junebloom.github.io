@@ -9,9 +9,9 @@ export const Tile = ({ Icon, title, subtitle, href }) => (
       <div className="row-start-2 md:mx-auto text-2xl">
         <Icon />
       </div>
-      <div className="row-start-3 flex-grow flex md:flex-col justify-between md:text-center leading-5">
-        <span className="text-lg">{title}</span>
-        <span className="font-semibold text-indigo-400 group-hover:text-white">
+      <div className="row-start-3 flex-grow flex md:flex-col justify-between leading-5">
+        <span className="text-lg text-left md:text-center">{title}</span>
+        <span className="text-right md:text-center font-semibold text-indigo-400 group-hover:text-white">
           {subtitle}
         </span>
       </div>
