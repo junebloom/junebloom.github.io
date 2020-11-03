@@ -31,13 +31,13 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `gatsby-starter-default`,
-        short_name: `starter`,
+        name: `Juniper Bloom`,
+        short_name: `Juniper Bloom`,
         start_url: `/`,
-        background_color: `#663399`,
-        theme_color: `#663399`,
+        background_color: `#ffffff`,
+        theme_color: `#6f75f6`,
         display: `minimal-ui`,
-        icon: `src/images/logo-square.svg`, // This path is relative to the root of the site.
+        icon: `src/images/logo-square.svg`,
       },
     },
     `gatsby-plugin-postcss`,
