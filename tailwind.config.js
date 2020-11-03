@@ -10,7 +10,7 @@ module.exports = {
     typography: (theme) => ({
       default: {
         css: {
-          color: "#464A81",
+          color: "#393C69",
           h1: {
             color: theme("colors.indigo.500"),
             fontSize: theme("fontSize.5xl"),
@@ -93,8 +93,8 @@ module.exports = {
     extend: {
       colors: {
         indigo: {
-          100: "#f5f5ff",
-          200: "#EBEBFF",
+          100: "#F8F8FF",
+          200: "#f5f5ff",
           300: "#BFC2FF",
           400: "#9399ff",
           500: "#6f75f6",
