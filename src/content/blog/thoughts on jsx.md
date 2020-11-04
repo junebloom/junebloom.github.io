@@ -1,5 +1,5 @@
 ---
-title: Some Thoughts On Dropping JSX
+title: Some Thoughts on Dropping JSX
 date: 2020-11-02
 ---
 
