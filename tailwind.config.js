@@ -48,11 +48,15 @@ module.exports = {
           },
           a: {
             color: theme("colors.red.500"),
+            fontWeight: theme("fontWeight.bold"),
             textDecorationLine: "none",
+            textDecorationThickness: "2px",
             "&:hover": {
-              color: theme("colors.red.600"),
               textDecorationLine: "underline",
-              textDecorationThickness: "2px",
+            },
+            code: {
+              color: "inherit",
+              fontWeight: "inherit",
             },
           },
           li: {

@@ -13,6 +13,6 @@
     @apply font-bold text-red-500;
   }
   a:hover {
-    @apply text-red-600 underline text-decoration-2;
+    @apply underline text-decoration-2;
   }
 }
