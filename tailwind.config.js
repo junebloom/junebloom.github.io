@@ -43,10 +43,6 @@ module.exports = {
             marginTop: theme("spacing.8"),
             marginBottom: theme("spacing.4"),
           },
-          p: {
-            marginTop: theme("spacing.5"),
-            marginBottom: theme("spacing.5"),
-          },
           strong: {
             color: theme("colors.indigo.700"),
           },
@@ -58,6 +54,9 @@ module.exports = {
               textDecorationLine: "underline",
               textDecorationThickness: "2px",
             },
+          },
+          li: {
+            margin: "0",
           },
           blockquote: {
             color: theme("colors.indigo.500"),
@@ -75,6 +74,7 @@ module.exports = {
             fontWeight: theme("fontWeight.normal"),
             borderRadius: theme("borderRadius.default"),
             padding: theme("spacing.1"),
+            whiteSpace: "pre",
           },
           "code::before": {
             content: "none",
