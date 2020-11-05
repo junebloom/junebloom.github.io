@@ -11,7 +11,7 @@ export const BlogPostPreview = ({ title, slug, date, timeToRead, excerpt }) => (
       {title}
     </Link>
 
-    <div className="space-x-2 text-xl text-indigo-400">
+    <div className="space-x-2 text-xl text-indigo-600">
       <span>{date}</span>
       <span>·</span>
       <span>{`${formatInteger(timeToRead)} minute read`}</span>

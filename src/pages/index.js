@@ -50,7 +50,7 @@ const IndexPage = () => {
             <span className="text-indigo-600">Juniper</span>
             {" } "}
             <span className="text-indigo-500">from</span>{" "}
-            <span className="text-red-400">
+            <span className="text-red-500">
               "
               <a href="mailto:june.a.bloom@gmail.com">june.a.bloom@gmail.com</a>
               "
@@ -61,7 +61,7 @@ const IndexPage = () => {
 
         {/* Blog */}
         <Section title="Read my documentation.">
-          <ul className="list-inside list-disc ml-8 space-y-2 text-red-400">
+          <ul className="list-inside list-disc ml-8 space-y-2 text-red-500">
             {data.allMarkdownRemark.nodes.map((post) => (
               <li key={post.fields.slug}>
                 <Link to={post.fields.slug}>{post.frontmatter.title}</Link>

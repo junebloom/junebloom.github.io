@@ -47,10 +47,10 @@ module.exports = {
             color: theme("colors.indigo.700"),
           },
           a: {
-            color: theme("colors.red.400"),
+            color: theme("colors.red.500"),
             textDecorationLine: "none",
             "&:hover": {
-              color: theme("colors.red.500"),
+              color: theme("colors.red.600"),
               textDecorationLine: "underline",
               textDecorationThickness: "2px",
             },

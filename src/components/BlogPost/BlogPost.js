@@ -8,7 +8,7 @@ export const BlogPost = ({ title, date, timeToRead, html }) => (
       {title}
     </h1>
 
-    <h2 className="space-x-2 text-xl text-indigo-400">
+    <h2 className="space-x-2 text-xl text-indigo-600">
       <span>{date}</span>
       <span>·</span>
       <span>{`${formatInteger(timeToRead)} minute read`}</span>

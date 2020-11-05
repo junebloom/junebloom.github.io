@@ -10,9 +10,9 @@
 
 @layer base {
   a {
-    @apply font-bold text-red-400;
+    @apply font-bold text-red-500;
   }
   a:hover {
-    @apply text-red-500 underline text-decoration-2;
+    @apply text-red-600 underline text-decoration-2;
   }
 }

@@ -36,7 +36,7 @@ const AboutPage = () => {
           <h1 className="text-6xl font-black leading-none text-indigo-500">
             Juniper Bloom
           </h1>
-          <h2 className="text-2xl text-indigo-400">- About Me -</h2>
+          <h2 className="text-2xl text-indigo-500">- About Me -</h2>
         </div>
         <div
           className="prose max-w-none"
