@@ -86,30 +86,35 @@ const IndexPage = () => {
             */}
             <Tile
               Icon={FiBox}
+              iconTitle="Box Icon"
               title="Fae"
               subtitle="ECS Framework"
               href="https://github.com/junebloom/fae"
             />
             <Tile
               Icon={FiMic}
+              iconTitle="Microphone Icon"
               title="Practical"
               subtitle="Audio Recorder"
               href="https://github.com/junebloom/practical"
             />
             <Tile
               Icon={FiShare2}
+              iconTitle="Graph Icon"
               title="ScrawlGraph"
               subtitle="Spatial Data Format"
               href="https://github.com/junebloom/scrawlgraph"
             />
             <Tile
               Icon={FiCode}
+              iconTitle="Code Icon"
               title="This Site"
               subtitle="Personal Page and Blog"
               href="https://github.com/junebloom/junebloom.github.io"
             />
             <Tile
               Icon={FiGithub}
+              iconTitle="GitHub Icon"
               title="See More"
               subtitle="at GitHub"
               href="https://github.com/junebloom"
