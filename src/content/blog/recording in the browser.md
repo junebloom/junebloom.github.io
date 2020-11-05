@@ -110,7 +110,7 @@ The `data` property passed to `ondataavilable` is a [Blob](https://developer.moz
 Be aware that `ondataavailable` doesn't _always_ behave this way: If we pass a timeslice argument to `start()`, then `ondataavailable` will fire once per timeslice until recording has ended.
 
 ```js
-// A Blob will be available every 100ms, and it's up to use to join
+// A Blob will be available every 100ms, and it's up to us to join
 // the slices together into a full file once recording has finished.
 mediaRecorder.start(100);
 ```
