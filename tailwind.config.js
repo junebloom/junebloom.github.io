@@ -59,7 +59,7 @@ module.exports = {
             margin: "0",
           },
           blockquote: {
-            color: theme("colors.indigo.500"),
+            color: theme("colors.indigo.600"),
             background: theme("colors.indigo.200"),
             borderLeftColor: theme("colors.indigo.500"),
             borderRadius: theme("borderRadius.sm"),
@@ -70,7 +70,7 @@ module.exports = {
           },
           code: {
             background: theme("colors.indigo.100"),
-            color: theme("colors.indigo.600"),
+            color: theme("colors.indigo.700"),
             fontWeight: theme("fontWeight.normal"),
             borderRadius: theme("borderRadius.default"),
             padding: theme("spacing.1"),
@@ -84,7 +84,7 @@ module.exports = {
           },
           pre: {
             background: theme("colors.indigo.100"),
-            color: theme("colors.indigo.600"),
+            color: theme("colors.indigo.700"),
             lineHeight: theme("lineHeight.normal"),
           },
         },
