@@ -1,6 +1,6 @@
 ---
 title: How to Record Audio in the Browser
-date: 2020-11-04
+date: 2020-11-05
 ---
 
 There are three browser APIs we'll need for recording audio:
@@ -103,9 +103,9 @@ mediaRecorder.start();
 setTimeout(() => mediaRecorder.stop(), 5000);
 ```
 
-You'll obviously want `start()` and `stop()` to be triggered in ways that make sense for your app. Probably in response to clicking a record/stop button.
+You'll obviously want `start()` and `stop()` to be triggered in ways that make sense for your app. Probably in response to clicking a button.
 
-The `data` property passed to `ondataavilable` is a [Blob]() containing the full resulting audio file, in whatever encoding and format the browser chose automatically (more on this below).
+The `data` property passed to `ondataavilable` is a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) containing the full resulting audio file, in whatever encoding and format the browser chose automatically (more on this below).
 
 Be aware that `ondataavailable` doesn't _always_ behave this way: If we pass a timeslice argument to `start()`, then `ondataavailable` will fire once per timeslice until recording has ended.
 
@@ -132,6 +132,6 @@ Be careful setting the MIME type and codec, because browser support for differen
 
 ## Conclusion
 
-So there you have it! Recording audio in the browser is pretty straightforward thanks to APIs that are well-designed and pleasant to use, which is always nice to see!
+So there you have it! Recording audio in the browser is pretty straightforward thanks to some well-designed APIs. Always nice to see!
 
-If you want to see a real-world example using these APIs, check out the [Recorder component](https://github.com/junebloom/practical/blob/develop/src/components/Recorder.js) source for [Practical](https://github.com/junebloom/practical), a tiny audio recorder app I made for practicing vocal exercises and music.
+If you want to see a real-world example using these APIs, check out the [Recorder component](https://github.com/junebloom/practical/blob/develop/src/components/Recorder.js) for [Practical](https://junebloom.github.io/practical/), a small audio recorder app I made for practicing vocal exercises and music.
