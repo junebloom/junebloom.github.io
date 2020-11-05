@@ -21,7 +21,7 @@ export function Layout({ children }) {
     <div className="flex flex-col min-h-screen">
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
       <main className="flex-grow flex flex-col items-stretch">{children}</main>
-      <footer className="flex items-center justify-center space-x-1 m-16 text-sm text-indigo-400 font-bold">
+      <footer className="flex items-center justify-center space-x-1 m-16 text-sm text-indigo-500 font-bold">
         <RiCopyleftLine title="copyleft">🄯</RiCopyleftLine>
         <span>{new Date().getFullYear()} - All wrongs reversed.</span>
       </footer>
