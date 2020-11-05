@@ -128,7 +128,7 @@ const mediaRecorder = new MediaRecorder(stream, {
 });
 ```
 
-Be careful setting the MIME type and codec, because browser support for different formats is not consistent. You should use [`MediaRecorder.isTypeSupported()`]() to ensure that the format is supported, and have fallbacks in case it isn't.
+Be careful setting the MIME type and codec, because browser support for different formats is not consistent. You should use [`MediaRecorder.isTypeSupported()`](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/isTypeSupported) to ensure that the format is supported, and have fallbacks in case it isn't.
 
 ## Conclusion
 
