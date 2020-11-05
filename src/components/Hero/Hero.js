@@ -11,7 +11,7 @@ export const Hero = () => (
       style={{
         width: "80vw",
         height: "60vw",
-        transform: "translate(-35%, -32%) rotate(-30deg)",
+        transform: "translate(-35%, -42%) rotate(-30deg)",
       }}
     />
     <div
