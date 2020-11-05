@@ -18,7 +18,10 @@ export const BlogPostPreview = ({ title, slug, date, timeToRead, excerpt }) => (
     </div>
 
     <p className="text-left prose max-w-none w-full">
-      {excerpt} <Link to={slug}>read more</Link>
+      {excerpt}{" "}
+      <Link to={slug} className="whitespace-pre">
+        read more
+      </Link>
     </p>
   </article>
 );
