@@ -168,7 +168,7 @@ Our algorithm will work by finding the difference (diff) between two VDOM trees.
 First things first, our algorithm will need to be able to determine if two VDOM nodes are identical or not, so let's write a function for that.
 
 ```js
-// Return true if a and b are "shallowly" equal, false if not.
+// Return true if `a` and `b` are "shallowly" equal, false if not.
 function equals(a, b) {
   // If their tags are different, we know they're not identical elements.
   if (a[0] !== b[0]) return false;
@@ -199,4 +199,48 @@ Perhaps you noticed that we don't do any checks for differences between the chil
 
 You may have also noticed that we only compare props one layer deep. This is for simplicity and performance reasons. It has the consequence that if we have a mutable prop, mutations won't be detected by our algorithm. So let's deal with that by just defining that props must be treated as immutable. It's a feature.
 
-Now we're ready to write the diff algorithm.
+We also need a function to create a real DOM element from a VDOM element:
+
+```js
+// Create and return a real DOM element from the given virtual `element`.
+function createDOMElement(element) {
+  // Create an element with the correct tag.
+  const domElement = document.createElement(element[0]);
+
+  // Iterate over the props of the virtual element and set them as attributes on
+  // the element.
+  Object.entries(element[1]).forEach(([key, value]) => {
+    domElement[key] = value;
+  });
+
+  // Return the constructed element.
+  return domElement;
+}
+```
+
+This function just creates the element. Actually attaching it to the DOM will be done by the diff algorithm. Speaking of, we're ready to write that now!
+
+This will be the final function for our VDOM implementation. It's job will be to determine the diff between two VDOM trees and update the real DOM accordingly.
+
+```js
+// Recursively update the DOM tree of `domParent` based on the diff between
+// VDOM trees `a` and `b`.
+// `index` indicates which child of domParent we're currently operating on.
+function updateDOM(domParent, a, b, index) {
+  // If a doesn't exist, that means b is a new addition to the tree.
+  if (!a) {
+    if (typeof b === "string") {
+      // If b is a text node, attach it directly.
+      domParent.append(b);
+    } else {
+      // Otherwise, render it and attach the rendered element.
+      domParent.append(createDOMElement(b));
+    }
+  }
+
+  // If b doesn't exist, that means it was removed from the tree, so let's
+  // remove it from domParent as well.
+  else if (!b) {
+  }
+}
+```
