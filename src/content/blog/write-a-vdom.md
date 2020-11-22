@@ -5,7 +5,7 @@ date: 2020-11-22
 
 I'm sure you've heard the term _virtual DOM_ (VDOM) before. You probably even know that libraries like React are designed around the concept, but maybe you don't know exactly what a VDOM is or how it works, and if so, you've come to the right place! We're going to explore the concept of "the VDOM" by actually coding one from scratch, so buckle up!
 
-For the average frontend engineer or web developer there aren't a lot of practical situations where writing your own VDOM makes sense, but it _is_ a really great learning experience that will help you understand what makes React work. Let's get started.
+For the average frontend engineer or web developer there aren't a lot of situations where writing your own VDOM makes sense, but it _is_ a really great learning experience that will help you understand what makes React work. Let's get started.
 
 _(If you want to get straight to coding, just skip to the section The Anatomy of a VDOM.)_
 
@@ -75,7 +75,7 @@ There are two main parts of a VDOM implementation.
 
 - and there is an **algorithm**, which takes the VDOM tree and turns it into actual DOM nodes for the browser to render.
 
-Constructing a VDOM tree should be _fast_. The idea is that we can just re-compute the entire VDOM every time something on the page changes, and then the algorithm we write will figure out the minimal number of steps required to update the actual DOM to match.
+Constructing a VDOM tree should be _fast_. The idea is that we can just re-compute the entire VDOM every time something on the page changes, and then our algorithm will figure out an efficient way to update the actual DOM to match.
 
 ### The VDOM Tree
 
@@ -88,7 +88,7 @@ const text = "Hello, VDOM!";
 
 // A single VDOM element.
 // This is an array where the first item is the tag name,
-// the second item is a dictionary of attributes,
+// the second item is a dictionary of attributes (props),
 // and the third item is an array of child elements/text nodes.
 const element = ["a", { href: "https://..." }, [text]];
 ```
@@ -161,8 +161,42 @@ Starting to look familiar? Kind of reminds you of React's functional components,
 
 ## The VDOM Algorithm
 
-Now we just need an algorithm that can take our VDOM trees and update the actual DOM to reflect their content. Should be simple, right?
+Now we just need an algorithm that can take our VDOM tree and update the actual DOM to reflect its content. This algorithm is of course the cold, imperative, robot heart of our virtual DOM. It makes our declarative code do something instead of nothing; a desirable feature.
 
-This algorithm is of course the cold, imperative robot heart of our virtual DOM. It makes our declarative code do something instead of nothing; a desirable feature.
+Our algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will then use this diff to determine which DOM nodes to modify, and which ones to leave as they are.
 
-To begin,
+First things first, our algorithm will need to be able to determine if two VDOM nodes are identical or not, so let's write a function for that.
+
+```js
+// Return true if a and b are "shallowly" equal, false if not.
+function equals(a, b) {
+  // If their tags are different, we know they're not identical elements.
+  if (a[0] !== b[0]) return false;
+
+  // Now we will iterate over the props of each element and compare them,
+  // starting with a.
+  for (const propName in a[1]) {
+    // Return false if the property doesn't have an identical value on b.
+    // This will catch any props that were changed or removed between a and b.
+    if (a[1][propName] !== b[1][propName]) return false;
+  }
+
+  // We will iterate over b's props now.
+  for (const propName in b[1]) {
+    // Return false if the property doesn't exist on a.
+    // This catches any new properties of b that weren't present on a.
+    if (a[1][propName] === undefined) return false;
+  }
+
+  // If we made it this far, they're equal!
+  return true;
+}
+```
+
+_(This function could be possibly be optimized by tracking which property names we checked in the first for loop, and skipping the comparison in the second for loop if we've already checked that property, but simple comparison is already so fast that I not sure you'd actually see any real-world performance gain.)_
+
+Perhaps you noticed that we don't do any checks for differences between the children of our elements. We skip this because it's not necessary. All of the children will be compared and dealt with by the diff algorithm. Seems kind of sinister, actually.
+
+You may have also noticed that we only compare props one layer deep. This is for simplicity and performance reasons. It has the consequence that if we have a mutable prop, mutations won't be detected by our algorithm. So let's deal with that by just defining that props must be treated as immutable. It's a feature.
+
+Now we're ready to write the diff algorithm.
