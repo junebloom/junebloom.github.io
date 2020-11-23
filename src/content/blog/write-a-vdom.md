@@ -195,52 +195,89 @@ function equals(a, b) {
 
 _(This function could be possibly be optimized by tracking which property names we checked in the first for loop, and skipping the comparison in the second for loop if we've already checked that property, but simple comparison is already so fast that I not sure you'd actually see any real-world performance gain.)_
 
-Perhaps you noticed that we don't do any checks for differences between the children of our elements. We skip this because it's not necessary. All of the children will be compared and dealt with by the diff algorithm. Seems kind of sinister, actually.
+Perhaps you noticed that we don't do any checks for differences between the children of our elements. We skip this because it's not necessary. All of the children will be compared and dealt with by the diff algorithm. Sounds kind of sinister, actually.
 
 You may have also noticed that we only compare props one layer deep. This is for simplicity and performance reasons. It has the consequence that if we have a mutable prop, mutations won't be detected by our algorithm. So let's deal with that by just defining that props must be treated as immutable. It's a feature.
 
 We also need a function to create a real DOM element from a VDOM element:
 
 ```js
-// Create and return a real DOM element from the given virtual `element`.
-function createDOMElement(element) {
-  // Create an element with the correct tag.
-  const domElement = document.createElement(element[0]);
+// Return a real DOM node for the given virtual node, recursively creating any
+// children as well.
+function createDomNode(virtualNode) {
+  // We don't need to do anything special if virtualNode is a text node.
+  if (typeof virtualNode === "string") return virtualNode;
 
-  // Iterate over the props of the virtual element and set them as attributes on
-  // the element.
-  Object.entries(element[1]).forEach(([key, value]) => {
-    domElement[key] = value;
+  // If it's not a text node, then create a new DOM element with the right tag.
+  const tag = virtualNode[0];
+  const domNode = document.createElement(tag);
+
+  // Iterate over the props of the virtual node and set them as attributes.
+  const props = virtualNode[1];
+  Object.entries(props).forEach(([key, value]) => {
+    domNode[key] = value;
   });
 
-  // Return the constructed element.
-  return domElement;
+  // Recursively create any children.
+  const children = virtualNode[2];
+  children.forEach((child) => {
+    domNode.append(createDomNode(child));
+  });
+
+  // Return the constructed DOM node.
+  return domNode;
 }
 ```
 
-This function just creates the element. Actually attaching it to the DOM will be done by the diff algorithm. Speaking of, we're ready to write that now!
+This function just creates the element. Actually attaching it to the DOM will be done by the diffing algorithm, which we're ready to write now!
 
 This will be the final function for our VDOM implementation. It's job will be to determine the diff between two VDOM trees and update the real DOM accordingly.
 
 ```js
+const left = [];
+const right = [
+  "main",
+  {},
+  [
+    ["h1", {}, ["Welcome to my page!"]],
+    ["p", {}, ["I hope you enjoy it here."]],
+  ],
+];
+
 // Recursively update the DOM tree of `domParent` based on the diff between
-// VDOM trees `a` and `b`.
-// `index` indicates which child of domParent we're currently operating on.
-function updateDOM(domParent, a, b, index) {
-  // If a doesn't exist, that means b is a new addition to the tree.
-  if (!a) {
-    if (typeof b === "string") {
-      // If b is a text node, attach it directly.
-      domParent.append(b);
-    } else {
-      // Otherwise, render it and attach the rendered element.
-      domParent.append(createDOMElement(b));
-    }
+// VDOM nodes `a` and `b`. `index` is the index of the `domParent.childNodes`
+// array where we can find the real DOM node corresponding to a/b.
+function updateDom(domParent, a, b, index) {
+  // Added
+  if (b && !a) {
+    // b is a new addition to the VDOM, so we need to add it to the real DOM.
+    // If b is a text node, we can add it directly.
+    if (typeof b === "string") domParent.append(b);
+    // Otherwise, we need to create a new DOM node and add that.
+    else domParent.append(createDomNode(b));
   }
 
-  // If b doesn't exist, that means it was removed from the tree, so let's
-  // remove it from domParent as well.
-  else if (!b) {
+  // Removed
+  else if (a && !b) {
+    // b was removed from the VDOM, so we need to remove the corresponding
+    // node from the real DOM.
+    domParent.childNodes[index].remove();
+  }
+
+  // Changed
+  else if (!equals(a, b)) {
+    // b was modified, so we need to replace the corresponding DOM node with
+    // an updated one.
+    if (typeof b === "string") domParent.childNodes[index].replaceWith(b);
+    else domParent.childNodes[index].replaceWith(createDomNode(b));
+  }
+
+  // Iterate over the children of domParent, and recursively call updateDom.
+  else {
+    const length = Math.max(a[2].length, b[2].length);
+    for (let i = 0; i < length; i++) {
+      updateDom(domParent.childNodes[index], a[2][i], b[2][i], i);
+    }
   }
 }
 ```
