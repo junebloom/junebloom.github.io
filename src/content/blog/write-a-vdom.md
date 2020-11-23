@@ -231,52 +231,71 @@ function createDomNode(virtualNode) {
 
 This function just creates the element. Actually attaching it to the DOM will be done by the diffing algorithm, which we're ready to write now!
 
-This will be the final function for our VDOM implementation. It's job will be to determine the diff between two VDOM trees and update the real DOM accordingly.
+This will be the final function for our VDOM implementation. It's job will be to recursively determine the diff between two VDOM trees and update the real DOM accordingly. This function is somewhat difficult to reason about without context, so it deserves a bit of preamble.
+
+First, here is the function signature:
 
 ```js
-const left = [];
-const right = [
-  "main",
-  {},
-  [
-    ["h1", {}, ["Welcome to my page!"]],
-    ["p", {}, ["I hope you enjoy it here."]],
-  ],
-];
+function updateDom(a, b, domParent, index) {}
+```
 
-// Recursively update the DOM tree of `domParent` based on the diff between
-// VDOM nodes `a` and `b`. `index` is the index of the `domParent.childNodes`
-// array where we can find the real DOM node corresponding to a/b.
-function updateDom(domParent, a, b, index) {
-  // Added
-  if (b && !a) {
-    // b is a new addition to the VDOM, so we need to add it to the real DOM.
-    // If b is a text node, we can add it directly.
+It is important to recognize that, conceptually, we're only dealing with one node per iteration of this function: The so-called "current node".
+
+- `a` is the current node in its _previous state_, as a VDOM object.
+- `b` is the current node in its _new state_, as a VDOM object. This is the "true" current node to which the real DOM should conform.
+- And `domParent.childNodes[index]` is the real-DOM object which corresponds to the current node's previous state, and which we wish to update.
+
+It is also important to note that, while these three things can be conceptualized as being the same imaginary "current node", `b` is also likely to be "out of sync" with the other two and actually reference completely different nodes. This can happen when nodes are added or removed, for example.
+
+So it may be more helpful to think of `b` as the current node's true state, while `a` and the DOM node referenced by `index` refer to what _used_ to be where `b` currently is in the tree, regardless of whether that's the current node in an older state, or a completely different node.
+
+In the case that `a` and `b` aren't identical, we don't do anything fancy, we just discard the DOM node and replace it with the current node's new state.
+
+Hopefully this preamble makes it easier to follow! Let's get started.
+
+```js
+// Recursively update the contents of DOM node `domParent` according to the
+// diff between the previous VDOM node `a` and the new VDOM node `b`.
+// `index` is the position of `a` as a real-DOM node in the
+// `domParent.childNodes` array.
+function updateDom(a, b, domParent, index) {}
+  // Store a reference to the DOM node we're currently dealing with.
+  const domNode = domParent.childNodes[index];
+
+  // If there is no new-state, then the current node was removed.
+  if (!b) {
+    // So we remove it from the DOM.
+    domNode.remove();
+  }
+
+  // If there is no previous state, then the current node is entirely new.
+  else if (!a) {
+    // If this is a text node, we can just add it directly to the DOM.
     if (typeof b === "string") domParent.append(b);
     // Otherwise, we need to create a new DOM node and add that.
     else domParent.append(createDomNode(b));
   }
 
-  // Removed
-  else if (a && !b) {
-    // b was removed from the VDOM, so we need to remove the corresponding
-    // node from the real DOM.
-    domParent.childNodes[index].remove();
-  }
-
-  // Changed
+  // If the previous and new states are different, then the node changed.
   else if (!equals(a, b)) {
-    // b was modified, so we need to replace the corresponding DOM node with
-    // an updated one.
-    if (typeof b === "string") domParent.childNodes[index].replaceWith(b);
-    else domParent.childNodes[index].replaceWith(createDomNode(b));
+    // So we replace the old domNode with the updated current node.
+    if (typeof b === "string") domNode.replaceWith(b);
+    else domNode.replaceWith(createDomNode(b));
   }
 
-  // Iterate over the children of domParent, and recursively call updateDom.
+  // If the current node wasn't removed, added, or changed, then we can recurse
+  // over the current node's children to apply any potential updates to them.
   else {
-    const length = Math.max(a[2].length, b[2].length);
+    // Assign names to the children arrays, for readability.
+    const childrenA = a[2];
+    const childrenB = b[2];
+
+    // Use the longer of the two arrays, to ensure we don't miss any nodes.
+    const length = Math.max(childrenA.length, childrenB.length);
+
+    // Iterate over and recursively update any children.
     for (let i = 0; i < length; i++) {
-      updateDom(domParent.childNodes[index], a[2][i], b[2][i], i);
+      updateDom(domNode, childrenA[i], childrenB[i], i);
     }
   }
 }
