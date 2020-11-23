@@ -250,7 +250,7 @@ This is a recursive function, and it is important to recognize that, conceptuall
 
 It is also important to note that, while these three things can be conceptualized as being the same imaginary "current node", `b` is likely to be "out of sync" with the other two and actually reference a completely different node. This can happen when nodes are added or removed, for example.
 
-So it may be more helpful to think of `b` as the current node's true state, while `a` and the DOM node referenced by `index` refer to what _used_ to be where `b` currently is in the tree, regardless of whether that's the current node in an older state, or a completely different node.
+So it may be more helpful to think of `b` as the current node's true state, while `a` and the DOM node referenced by `index` refer to what _used_ to be where `b` currently is in the tree, regardless of whether that's the current node the same state, in an older state, or a completely different node.
 
 In the case that `a` and `b` aren't identical, we don't do anything fancy, we just discard the DOM node and replace it with the current node's new state.
 
@@ -304,17 +304,23 @@ function updateDom(a, b, domParent, index) {
 }
 ```
 
-Now we have everything we need for a functioning VDOM! We could optimize it by using string keys for lists of elements like React, enabling us to re-use perfectly good DOM nodes when list items are re-ordered, instead of throwing them out and completely re-building them just because they're in a different index position, but that's another exercise for you, my dear reader.
+Now we have everything we need for a functioning VDOM!
 
-The only thing left now is to make it do something.
+We could of course optimize our algorithm. For example, using string keys for lists of elements like React does would enable us to re-use perfectly good DOM nodes when sibling nodes are re-ordered, instead of throwing them out and completely re-building them just because they're in a different index position.
+
+Another optimization React uses is that it updates attributes/properties atomically when possible, rather than re-rendering the entire DOM node every time a property changes.
+
+I'll leave these optimizations as another exercise for you.
+
+The only thing left now is to make our VDOM do something interesting.
 
 ## To-Do or Not To-Do
 
 Let's do to-do. We'll keep it traditional.
 
-Since we've just written a minimal VDOM, we don't have any of the fancy fluff like state, form inputs, or update handling that a "real" front-end library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
+Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" front-end library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
 
-_(Don't expect anything too amazing. This is about implementing a VDOM, not a whole front-end library.)_
+_(Don't expect anything too amazing. This is about implementing a VDOM, not a whole UI library.)_
 
 ```js
 // Create an app object to hold all of our internals.
@@ -329,19 +335,23 @@ const app = {
   // For state, we'll just use an object.
   state: {},
 
-  // We'll need to track our old and new VDOM trees so we can diff them when we
-  // perform state updates.
-  vdom: {
-    old: [],
-    new: [],
+  // Store our VDOM so we can diff it when we perform updates.
+  vdom: [],
+
+  // Render the app's VDOM and update the real DOM to match.
+  render() {
+    // Render the VDOM.
+    const oldVdom = this.vdom;
+    this.vdom = this.component(this.state, this.setState);
+
+    // Update the real DOM.
+    updateDom(oldVdom, this.vdom, this.root, 0);
   },
 
-  // A setState function will help us avoid mutating state, and also provide a
-  // convenient place to perform VDOM updates.
+  // Update the state and trigger a render.
   setState(newState) {
     this.state = newState;
-    this.vdom.old = this.vdom.new;
-    this.vdom.new = this.component(this.state, this.setState);
+    this.render();
   },
 };
 ```
@@ -358,7 +368,27 @@ const TodoItem = ({ todo, completeTodo }) => [
 ];
 
 // Next, an input component for adding new todos.
-const TodoInput = ({ addTodo }) => [];
+const TodoInput = ({ input, setInput, addTodo }) => [
+  "div",
+  {},
+  [
+    [
+      "input",
+      { type: "text", value: input, oninput: (e) => setInput(e.target.value) },
+      [],
+    ],
+    [
+      "button",
+      {
+        onclick: () => {
+          addTodo(input);
+          setInput("");
+        },
+      },
+      ["Add todo"],
+    ],
+  ],
+];
 
 // And most importantly, a todo app component to put it all together.
 const TodoApp = (state, setState) => [
@@ -367,15 +397,24 @@ const TodoApp = (state, setState) => [
   [
     ["h1", {}, ["Todos"]],
     TodoInput({
-      addTodo: (todo) => setState({ todos: [...state.todos, todo] }),
+      input: state.input ?? "",
+      setInput: (value) => setState({ ...state, input: value }),
+      addTodo: (todo) => setState({ ...state, todos: [...state.todos, todo] }),
     }),
-    state.todos.map((todo) =>
-      TodoItem({
-        todo,
-        completeTodo: () =>
-          setState({ todos: state.todos.filter((item) => item !== todo) }),
-      })
-    ),
+    [
+      "ul",
+      {},
+      state.todos.map((todo) =>
+        TodoItem({
+          todo,
+          completeTodo: () =>
+            setState({
+              ...state,
+              todos: state.todos.filter((item) => item !== todo),
+            }),
+        })
+      ),
+    ],
   ],
 ];
 ```
