@@ -114,14 +114,15 @@ const page = [
 ];
 ```
 
-This kind of representation is very similar to what React uses, except React uses objects instead of arrays, and provides a `createElement` function to generate those objects, and most people use JSX, which hides the createElement calls behind a compile step, allowing you to write these VDOM structures using XML-like syntax similar to HTML. But other than that, just like React!
+This kind of representation is very similar to what React uses, except React uses objects instead of arrays, and provides a `createElement` function to generate those objects, and most people use JSX, which hides the `createElement` calls behind a compile step, allowing you to write VDOM structures using XML-like syntax similar to HTML. But other than that, just like React!
 
-Now that we have a defined VDOM structure, we can also define a way to write reusable functions to compose these structures:
+We could even write a simple function for the JSX compiler to compile to, allowing us to use JSX with our VDOM, but I'll leave that as an exercise for you.
+
+Now that we have a defined VDOM structure, we can write reusable functions to compose these structures:
 
 ```js
-// A generic page component we can use to make pages with a consistent
-// header and footer
-const Page = (props) => [
+// A generic page component to wrap our content with a header and footer
+const Page = (children) => [
   "div",
   {},
   [
@@ -133,28 +134,24 @@ const Page = (props) => [
         ["a", { href: "/about" }, ["About"]],
       ],
     ],
-    ["main", {}, props.children],
+    ["main", {}, children],
     ["footer", {}, ["Made with <3"]],
   ],
 ];
 
-const HomePage = () => [
-  Page,
-  {},
-  [
+// Home page component
+const HomePage = () =>
+  Page([
     ["h1", {}, ["Welcome to my page!"]],
     ["p", {}, ["I hope you enjoy it here."]],
-  ],
-];
+  ]);
 
-const AboutPage = () => [
-  Page,
-  {},
-  [
+// About page component
+const AboutPage = () =>
+  Page([
     ["h1", {}, ["About Me"]],
-    ["p", {}, ["I love web stuff!"]],
-  ],
-];
+    ["p", {}, ["I like my DOMs virtual!"]],
+  ]);
 ```
 
 Starting to look familiar? Kind of reminds you of React's functional components, doesn't it?
@@ -164,6 +161,8 @@ Starting to look familiar? Kind of reminds you of React's functional components,
 Now we just need an algorithm that can take our VDOM tree and update the actual DOM to reflect its content. This algorithm is of course the cold, imperative, robot heart of our virtual DOM. It makes our declarative code do something instead of nothing; a desirable feature.
 
 Our algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will then use this diff to determine which DOM nodes to modify, and which ones to leave as they are.
+
+### Equality!
 
 First things first, our algorithm will need to be able to determine if two VDOM nodes are identical or not, so let's write a function for that.
 
@@ -181,7 +180,7 @@ function equals(a, b) {
     if (a[1][propName] !== b[1][propName]) return false;
   }
 
-  // We will iterate over b's props now.
+  // Now iterate over b's props.
   for (const propName in b[1]) {
     // Return false if the property doesn't exist on a.
     // This catches any new properties of b that weren't present on a.
@@ -193,11 +192,13 @@ function equals(a, b) {
 }
 ```
 
-_(This function could be possibly be optimized by tracking which property names we checked in the first for loop, and skipping the comparison in the second for loop if we've already checked that property, but simple comparison is already so fast that I not sure you'd actually see any real-world performance gain.)_
+_(This function could possibly be optimized by tracking which property names we checked in the first for loop, and skipping the comparison in the second for loop if we've already checked that property, but simple comparison is already so fast that I'm not sure you'd actually see any real-world performance gain.)_
 
 Perhaps you noticed that we don't do any checks for differences between the children of our elements. We skip this because it's not necessary. All of the children will be compared and dealt with by the diff algorithm. Sounds kind of sinister, actually.
 
 You may have also noticed that we only compare props one layer deep. This is for simplicity and performance reasons. It has the consequence that if we have a mutable prop, mutations won't be detected by our algorithm. So let's deal with that by just defining that props must be treated as immutable. It's a feature.
+
+### Creating Real DOM Nodes
 
 We also need a function to create a real DOM element from a VDOM element:
 
@@ -231,7 +232,9 @@ function createDomNode(virtualNode) {
 
 This function just creates the element. Actually attaching it to the DOM will be done by the diffing algorithm, which we're ready to write now!
 
-This will be the final function for our VDOM implementation. It's job will be to recursively determine the diff between two VDOM trees and update the real DOM accordingly. This function is somewhat difficult to reason about without context, so it deserves a bit of preamble.
+### Diffing
+
+This will be the final function for our VDOM implementation. It's job will be to recursively determine the diff between two VDOM trees and update the real DOM accordingly. This function is somewhat difficult to reason about without context, so I guess I've got some explaining to do!
 
 First, here is the function signature:
 
@@ -239,41 +242,41 @@ First, here is the function signature:
 function updateDom(a, b, domParent, index) {}
 ```
 
-It is important to recognize that, conceptually, we're only dealing with one node per iteration of this function: The so-called "current node".
+This is a recursive function, and it is important to recognize that, conceptually, we're only dealing with one node per iteration: The so-called "current node".
 
 - `a` is the current node in its _previous state_, as a VDOM object.
 - `b` is the current node in its _new state_, as a VDOM object. This is the "true" current node to which the real DOM should conform.
 - And `domParent.childNodes[index]` is the real-DOM object which corresponds to the current node's previous state, and which we wish to update.
 
-It is also important to note that, while these three things can be conceptualized as being the same imaginary "current node", `b` is also likely to be "out of sync" with the other two and actually reference completely different nodes. This can happen when nodes are added or removed, for example.
+It is also important to note that, while these three things can be conceptualized as being the same imaginary "current node", `b` is likely to be "out of sync" with the other two and actually reference a completely different node. This can happen when nodes are added or removed, for example.
 
 So it may be more helpful to think of `b` as the current node's true state, while `a` and the DOM node referenced by `index` refer to what _used_ to be where `b` currently is in the tree, regardless of whether that's the current node in an older state, or a completely different node.
 
 In the case that `a` and `b` aren't identical, we don't do anything fancy, we just discard the DOM node and replace it with the current node's new state.
 
-Hopefully this preamble makes it easier to follow! Let's get started.
+Hopefully this explanation makes it easier to follow! Let's get coding.
 
 ```js
 // Recursively update the contents of DOM node `domParent` according to the
 // diff between the previous VDOM node `a` and the new VDOM node `b`.
 // `index` is the position of `a` as a real-DOM node in the
 // `domParent.childNodes` array.
-function updateDom(a, b, domParent, index) {}
+function updateDom(a, b, domParent, index) {
   // Store a reference to the DOM node we're currently dealing with.
   const domNode = domParent.childNodes[index];
 
-  // If there is no new-state, then the current node was removed.
-  if (!b) {
-    // So we remove it from the DOM.
-    domNode.remove();
-  }
-
   // If there is no previous state, then the current node is entirely new.
-  else if (!a) {
+  if (!a) {
     // If this is a text node, we can just add it directly to the DOM.
     if (typeof b === "string") domParent.append(b);
     // Otherwise, we need to create a new DOM node and add that.
     else domParent.append(createDomNode(b));
+  }
+
+  // If there is no new-state, then the current node was removed.
+  else if (!b) {
+    // So we remove it from the DOM.
+    domNode.remove();
   }
 
   // If the previous and new states are different, then the node changed.
@@ -290,7 +293,7 @@ function updateDom(a, b, domParent, index) {}
     const childrenA = a[2];
     const childrenB = b[2];
 
-    // Use the longer of the two arrays, to ensure we don't miss any nodes.
+    // Use the length of the longest array, to ensure we don't miss any nodes.
     const length = Math.max(childrenA.length, childrenB.length);
 
     // Iterate over and recursively update any children.
@@ -299,4 +302,80 @@ function updateDom(a, b, domParent, index) {}
     }
   }
 }
+```
+
+Now we have everything we need for a functioning VDOM! We could optimize it by using string keys for lists of elements like React, enabling us to re-use perfectly good DOM nodes when list items are re-ordered, instead of throwing them out and completely re-building them just because they're in a different index position, but that's another exercise for you, my dear reader.
+
+The only thing left now is to make it do something.
+
+## To-Do or Not To-Do
+
+Let's do to-do. We'll keep it traditional.
+
+Since we've just written a minimal VDOM, we don't have any of the fancy fluff like state, form inputs, or update handling that a "real" front-end library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
+
+_(Don't expect anything too amazing. This is about implementing a VDOM, not a whole front-end library.)_
+
+```js
+// Create an app object to hold all of our internals.
+const app = {
+  // This is the root DOM element to mount the VDOM to.
+  root: document.getElementById("app"),
+
+  // This is a function that returns the VDOM tree for our app.
+  // (We'll define it below.)
+  component: TodoApp,
+
+  // For state, we'll just use an object.
+  state: {},
+
+  // We'll need to track our old and new VDOM trees so we can diff them when we
+  // perform state updates.
+  vdom: {
+    old: [],
+    new: [],
+  },
+
+  // A setState function will help us avoid mutating state, and also provide a
+  // convenient place to perform VDOM updates.
+  setState(newState) {
+    this.state = newState;
+    this.vdom.old = this.vdom.new;
+    this.vdom.new = this.component(this.state, this.setState);
+  },
+};
+```
+
+Now we can define the components for our app.
+
+```js
+// First, a todo item component.
+// Clicking it marks it as complete.
+const TodoItem = ({ todo, completeTodo }) => [
+  "li",
+  { onclick: () => completeTodo(todo) },
+  [todo],
+];
+
+// Next, an input component for adding new todos.
+const TodoInput = ({ addTodo }) => [];
+
+// And most importantly, a todo app component to put it all together.
+const TodoApp = (state, setState) => [
+  "main",
+  {},
+  [
+    ["h1", {}, ["Todos"]],
+    TodoInput({
+      addTodo: (todo) => setState({ todos: [...state.todos, todo] }),
+    }),
+    state.todos.map((todo) =>
+      TodoItem({
+        todo,
+        completeTodo: () =>
+          setState({ todos: state.todos.filter((item) => item !== todo) }),
+      })
+    ),
+  ],
+];
 ```
