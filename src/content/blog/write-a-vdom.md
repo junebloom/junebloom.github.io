@@ -368,53 +368,50 @@ const TodoItem = ({ todo, completeTodo }) => [
 ];
 
 // Next, an input component for adding new todos.
-const TodoInput = ({ input, setInput, addTodo }) => [
-  "div",
-  {},
-  [
+const TodoInput = ({ input, setInput, addTodo }) => {
+  // Handles user typing into the text field.
+  const oninput = (e) => setInput(e.target.value);
+
+  // Handles clicking the add button.
+  const onclick = () => {
+    addTodo(input);
+    setInput("");
+  };
+
+  return [
+    "div",
+    {},
     [
-      "input",
-      { type: "text", value: input, oninput: (e) => setInput(e.target.value) },
-      [],
+      ["input", { type: "text", value: input, oninput }, []],
+      ["button", { onclick }, ["Add todo"]],
     ],
-    [
-      "button",
-      {
-        onclick: () => {
-          addTodo(input);
-          setInput("");
-        },
-      },
-      ["Add todo"],
-    ],
-  ],
-];
+  ];
+};
 
 // And most importantly, a todo app component to put it all together.
-const TodoApp = (state, setState) => [
-  "main",
-  {},
-  [
-    ["h1", {}, ["Todos"]],
-    TodoInput({
-      input: state.input ?? "",
-      setInput: (value) => setState({ ...state, input: value }),
-      addTodo: (todo) => setState({ ...state, todos: [...state.todos, todo] }),
-    }),
+const TodoApp = (state, setState) => {
+  // Updates the text input state.
+  const setInput = (value) => setState({ ...state, input: value });
+
+  // Adds a new todo item.
+  const addTodo = (todo) =>
+    setState({ ...state, todos: [...state.todos, todo] });
+
+  // Marks a todo item as complete.
+  const completeTodo = (todo) =>
+    setState({
+      ...state,
+      todos: state.todos.filter((item) => item !== todo),
+    });
+
+  return [
+    "main",
+    {},
     [
-      "ul",
-      {},
-      state.todos.map((todo) =>
-        TodoItem({
-          todo,
-          completeTodo: () =>
-            setState({
-              ...state,
-              todos: state.todos.filter((item) => item !== todo),
-            }),
-        })
-      ),
+      ["h1", {}, ["Todos"]],
+      TodoInput({ input: state.input ?? "", setInput, addTodo }),
+      ["ul", {}, state.todos.map((todo) => TodoItem({ todo, completeTodo }))],
     ],
-  ],
-];
+  ];
+};
 ```
