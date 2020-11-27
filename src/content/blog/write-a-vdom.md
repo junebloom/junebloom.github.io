@@ -340,7 +340,7 @@ export function updateDom(a, b, domParent, index) {
 
 Now we have everything we need for a functioning VDOM! Conceptually, this is almost the same approach that React uses for diffing, and it works really well.
 
-We could always optimize it, of course. For example, currently, if we remove a node from a set of siblings, then all of the sibling DOM nodes after it in the list will be modified unnecessarily, due to their positions shifting by one. React handles this by using unique string keys for lists of elements rather than keeping track of them by numeric index relative to their siblings. This allows React to track list items across renders and only update their DOM objects if they actually change.
+We could always add features or optimize it, of course. For example, currently, if we remove a node from a set of siblings, then all of the sibling DOM nodes after it in the list will be modified unnecessarily, due to their positions shifting by one. React handles this by using unique string keys for lists of elements rather than keeping track of them by numeric index relative to their siblings. This allows React to track list items across renders and only update their DOM objects if they actually change.
 
 I'll leave that as an exercise for you, though.
 
@@ -352,43 +352,49 @@ Let's do to-do. We'll keep it traditional.
 
 Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" front-end library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
 
-_(Don't expect anything too amazing! This article is about implementing a VDOM, not a real UI library.)_
+_(Don't expect anything too amazing! This article is about implementing a VDOM, not a whole UI library.)_
 
 ```js
-// Create an app object to hold all of our internals.
+// Set up the app internals for mounting to the DOM and handling updates.
 const app = {
-  // This is the root DOM element to mount the VDOM to.
+  // This is the DOM element to mount the VDOM to.
   root: document.getElementById("app"),
 
-  // This is a function that returns the VDOM tree for our app.
+  // This is a functional component that returns the VDOM tree for our app.
   // (We'll define it below.)
   component: TodoApp,
 
   // For state, we'll just use an object.
-  state: {},
+  state: {
+    todos: [],
+    input: "",
+  },
 
   // Store our VDOM so we can diff it when we perform updates.
   vdom: null,
-
-  // Render the app's VDOM and update the real DOM to match.
-  render() {
-    // Render the VDOM.
-    const oldVdom = this.vdom;
-    this.vdom = this.component(this.state, this.setState);
-
-    // Update the real DOM.
-    updateDom(oldVdom, this.vdom, this.root, 0);
-  },
-
-  // Update the state and trigger a render.
-  setState(newState) {
-    this.state = newState;
-    this.render();
-  },
 };
+
+// Renders the app's VDOM and updates the real DOM to match.
+function render() {
+  // Compute the VDOM.
+  const old = app.vdom;
+  app.vdom = app.component(getState, setState);
+
+  // Update the real DOM.
+  updateDom(old, app.vdom, app.root, 0);
+}
+
+// Updates the state and triggers a render.
+function setState(callback) {
+  app.state = callback(app.state);
+  render();
+}
+
+// Perform the initial render.
+render();
 ```
 
-Now we can define the components for our app.
+Next we need to define the components for our app:
 
 ```js
 // First, a todo item component.
@@ -398,50 +404,61 @@ const TodoItem = ({ todo, completeTodo }) => [
   { onclick: () => completeTodo(todo) },
   [todo],
 ];
+```
 
+```js
 // Next, an input component for adding new todos.
 const TodoInput = ({ input, setInput, addTodo }) => {
   // Handles user typing into the text field.
-  const oninput = (e) => setInput(e.target.value);
+  const oninput = (e) => {
+    setInput(e.target.value);
+  };
 
-  // Handles clicking the add button.
-  const onclick = () => {
+  // Handles submitting the input.
+  const onsubmit = (e) => {
     addTodo(input);
     setInput("");
+    e.preventDefault();
   };
 
   return [
-    "div",
-    {},
+    "form",
+    { onsubmit },
     [
       ["input", { type: "text", value: input, oninput }, []],
-      ["button", { onclick }, ["Add todo"]],
+      ["button", { type: "submit" }, ["Add todo"]],
     ],
   ];
 };
+```
 
+```js
 // And most importantly, a todo app component to put it all together.
 const TodoApp = (state, setState) => {
   // Updates the text input state.
-  const setInput = (value) => setState({ ...state, input: value });
+  const setInput = (value) => {
+    setState((state) => ({ ...state, input: value }));
+  };
 
   // Adds a new todo item.
-  const addTodo = (todo) =>
-    setState({ ...state, todos: [...state.todos, todo] });
+  const addTodo = (todo) => {
+    setState((state) => ({ ...state, todos: [...state.todos, todo] }));
+  };
 
   // Marks a todo item as complete.
-  const completeTodo = (todo) =>
-    setState({
+  const completeTodo = (todo) => {
+    setState((state) => ({
       ...state,
       todos: state.todos.filter((item) => item !== todo),
-    });
+    }));
+  };
 
   return [
     "main",
     {},
     [
-      ["h1", {}, ["Todos"]],
-      TodoInput({ input: state.input ?? "", setInput, addTodo }),
+      ["h1", {}, ["Todo"]],
+      TodoInput({ input: state.input, setInput, addTodo }),
       ["ul", {}, state.todos.map((todo) => TodoItem({ todo, completeTodo }))],
     ],
   ];

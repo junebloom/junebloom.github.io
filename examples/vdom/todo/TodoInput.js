@@ -5,18 +5,19 @@ export const TodoInput = ({ input, setInput, addTodo }) => {
     setInput(e.target.value);
   };
 
-  // Handles clicking the add button.
-  const onclick = () => {
+  // Handles submitting the input.
+  const onsubmit = (e) => {
     addTodo(input);
     setInput("");
+    e.preventDefault();
   };
 
   return [
-    "div",
-    {},
+    "form",
+    { onsubmit },
     [
       ["input", { type: "text", value: input, oninput }, []],
-      ["button", { onclick }, ["Add todo"]],
+      ["button", { type: "submit" }, ["Add todo"]],
     ],
   ];
 };

@@ -1,6 +1,6 @@
 // Shallowly compare the props of VDOM nodes `a` and `b`,
 // returning a map of changes, or null if there were no changes.
-function diffProps(a, b) {
+export function diffProps(a, b) {
   const propsA = a[1];
   const propsB = b[1];
 

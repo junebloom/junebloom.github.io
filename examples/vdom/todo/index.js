@@ -1,18 +1,18 @@
 import { updateDom } from "../updateDom.js";
 import { TodoApp } from "./TodoApp.js";
 
-// Mount the VDOM to the page, and set up state and render updates.
+// Set up the app internals for mounting to the DOM and handling updates.
 const app = {
-  // This is the root DOM element to mount the VDOM to.
+  // This is the DOM element to mount the VDOM to.
   root: document.getElementById("app"),
 
-  // This is a function that returns the VDOM tree for our app.
+  // This is a functional component that returns the VDOM tree for our app.
   // (We'll define it below.)
   component: TodoApp,
 
   // For state, we'll just use an object.
   state: {
-    todos: [],
+    todos: ["code a vdom"],
     input: "",
   },
 
@@ -20,26 +20,21 @@ const app = {
   vdom: null,
 };
 
-// Renders the app's VDOM and update the real DOM to match.
+// Renders the app's VDOM and updates the real DOM to match.
 function render() {
   // Compute the VDOM.
-  const oldVdom = app.vdom;
-  app.vdom = app.component(getState, setState);
+  const previous = app.vdom;
+  app.vdom = app.component(app.state, setState);
 
   // Update the real DOM.
-  updateDom(oldVdom, app.vdom, app.root, 0);
+  updateDom(previous, app.vdom, app.root, 0);
 }
 
-// Gets the freshest state, because closures can cause it to be stale if
-// referenced directly.
-function getState() {
-  return app.state;
-}
-
-// Updates the state and trigger a render.
-function setState(newState) {
-  app.state = newState;
+// Updates the state and triggers a render.
+function setState(callback) {
+  app.state = callback(app.state);
   render();
 }
 
+// Perform the initial render.
 render();
