@@ -162,65 +162,72 @@ Now we just need an algorithm that can take our VDOM tree and update the actual 
 
 Our algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will then use this diff to determine which DOM nodes to modify, and which ones to leave as they are.
 
-### Equality!
+### Starting Small
 
-First things first, our algorithm will need to be able to determine if two VDOM nodes are identical or not, so let's write a function for that.
+Before we tackle diffing an entire tree, it would be useful to get our diffing-feet wet with an easier subproblem. We will need to know what properties of a single VDOM node have changed from one update to the next, so that we can atomically update just those properties, rather than throwing out the whole real-DOM node and rebuilding it when something changes.
+
+Let's write a simple `diffProps` function to do that.
 
 ```js
-// Return true if `a` and `b` are "shallowly" equal, false if not.
-function equals(a, b) {
-  // If their tags are different, we know they're not identical elements.
-  if (a[0] !== b[0]) return false;
+// Shallowly compare the props of VDOM nodes `a` and `b`,
+// returning a map of changes, or null if there were no changes.
+function diffProps(a, b) {
+  const propsA = a[1];
+  const propsB = b[1];
 
-  // Now we will iterate over the props of each element and compare them,
-  // starting with a.
-  for (const propName in a[1]) {
-    // Return false if the property doesn't have an identical value on b.
-    // This will catch any props that were changed or removed between a and b.
-    if (a[1][propName] !== b[1][propName]) return false;
+  const diff = {};
+  let changed = false;
+
+  // Iterate over the props of each element and compare them, starting with a.
+  for (const prop in propsA) {
+    // This will catch any props that were updated or removed between a and b.
+    if (propsA[prop] !== propsB[prop]) {
+      diff[prop] = propsB[prop];
+      changed = true;
+    }
   }
 
   // Now iterate over b's props.
-  for (const propName in b[1]) {
-    // Return false if the property doesn't exist on a.
-    // This catches any new properties of b that weren't present on a.
-    if (a[1][propName] === undefined) return false;
+  for (const prop in propsB) {
+    // This catches any new props of b that weren't present on a.
+    if (propsA[prop] === undefined) {
+      diff[prop] = propsB[prop];
+      changed = true;
+    }
   }
 
-  // If we made it this far, they're equal!
-  return true;
+  return changed ? diff : null;
 }
 ```
 
 _(This function could possibly be optimized by tracking which property names we checked in the first for loop, and skipping the comparison in the second for loop if we've already checked that property, but simple comparison is already so fast that I'm not sure you'd actually see any real-world performance gain.)_
 
-Perhaps you noticed that we don't do any checks for differences between the children of our elements. We skip this because it's not necessary. All of the children will be compared and dealt with by the diff algorithm. Sounds kind of sinister, actually.
-
-You may have also noticed that we only compare props one layer deep. This is for simplicity and performance reasons. It has the consequence that if we have a mutable prop, mutations won't be detected by our algorithm. So let's deal with that by just defining that props must be treated as immutable. It's a feature.
+You may have noticed that we only compare props one layer deep. This is for simplicity and performance reasons. It has the consequence that if we have a mutable prop, mutations won't be detected by our algorithm. So let's deal with that by saying that props must be treated as immutable. It's a feature!
 
 ### Creating Real DOM Nodes
 
-We also need a function to create a real DOM element from a VDOM element:
+We also need a function that can turn a VDOM node into something we can attach to the real DOM.
 
 ```js
-// Return a real DOM node for the given virtual node, recursively creating any
-// children as well.
-function createDomNode(virtualNode) {
-  // We don't need to do anything special if virtualNode is a text node.
-  if (typeof virtualNode === "string") return virtualNode;
+// Create and return a real DOM node for the given VDOM node, recursively
+// creating any children as well.
+export function createDomNode(node) {
+  // Strings (text nodes) can be added directly to the DOM,
+  // so we don't need to do anything.
+  if (typeof node === "string") return node;
 
-  // If it's not a text node, then create a new DOM element with the right tag.
-  const tag = virtualNode[0];
+  // Create a new DOM element.
+  const tag = node[0];
   const domNode = document.createElement(tag);
 
   // Iterate over the props of the virtual node and set them as attributes.
-  const props = virtualNode[1];
-  Object.entries(props).forEach(([key, value]) => {
-    domNode[key] = value;
-  });
+  const props = node[1];
+  for (const prop in props) {
+    domNode[prop] = props[prop];
+  }
 
-  // Recursively create any children.
-  const children = virtualNode[2];
+  // Create the node's children.
+  const children = node[2];
   children.forEach((child) => {
     domNode.append(createDomNode(child));
   });
@@ -230,9 +237,9 @@ function createDomNode(virtualNode) {
 }
 ```
 
-This function just creates the element. Actually attaching it to the DOM will be done by the diffing algorithm, which we're ready to write now!
+This function just creates the DOM node. Actually attaching it to the DOM will be done by the diffing algorithm, which we're ready to write now!
 
-### Diffing
+### Dealing with Diffing
 
 This will be the final function for our VDOM implementation. It's job will be to recursively determine the diff between two VDOM trees and update the real DOM accordingly. This function is somewhat difficult to reason about without context, so I guess I've got some explaining to do!
 
@@ -336,7 +343,7 @@ const app = {
   state: {},
 
   // Store our VDOM so we can diff it when we perform updates.
-  vdom: [],
+  vdom: null,
 
   // Render the app's VDOM and update the real DOM to match.
   render() {
