@@ -164,9 +164,9 @@ Our algorithm will work by finding the difference (diff) between two VDOM trees.
 
 ### Starting Small
 
-Before we tackle diffing an entire tree, it would be useful to get our diffing-feet wet with an easier subproblem. We will need to know what properties of a single VDOM node have changed from one update to the next, so that we can atomically update just those properties, rather than throwing out the whole real-DOM node and rebuilding it when something changes.
+Before we tackle diffing an entire tree, it would be useful to get our diffing-feet wet with an easier subproblem. We will need to know what properties of a single VDOM node have changed from one update to the next, so that we can atomically update just those properties if possible, rather than throwing out the whole real-DOM node and rebuilding it when a value changes.
 
-Let's write a simple `diffProps` function to do that.
+Let's write a simple `diffProps` function to identify those changes.
 
 ```js
 // Shallowly compare the props of VDOM nodes `a` and `b`,
@@ -200,13 +200,13 @@ function diffProps(a, b) {
 }
 ```
 
-_(This function could possibly be optimized by tracking which property names we checked in the first for loop, and skipping the comparison in the second for loop if we've already checked that property, but simple comparison is already so fast that I'm not sure you'd actually see any real-world performance gain.)_
+_(This function could possibly be optimized by tracking which property names we checked in the first for loop, and skipping the comparison in the second for loop if we've already checked that property, but simple comparison is generally pretty fast so I'm not sure how much performance gain you'd see. Feel free to test it out!)_
 
 You may have noticed that we only compare props one layer deep. This is for simplicity and performance reasons. It has the consequence that if we have a mutable prop, mutations won't be detected by our algorithm. So let's deal with that by saying that props must be treated as immutable. It's a feature!
 
 ### Creating Real DOM Nodes
 
-We also need a function that can turn a VDOM node into something we can attach to the real DOM.
+We need a function that can turn a VDOM node into something we can attach to the real DOM. Easy enough.
 
 ```js
 // Create and return a real DOM node for the given VDOM node, recursively
@@ -237,11 +237,13 @@ export function createDomNode(node) {
 }
 ```
 
-This function just creates the DOM node. Actually attaching it to the DOM will be done by the diffing algorithm, which we're ready to write now!
+This function just creates the DOM node. Actually attaching it to the DOM will be done by the diffing algorithm, which we're ready to approach now!
 
 ### Dealing with Diffing
 
-This will be the final function for our VDOM implementation. It's job will be to recursively determine the diff between two VDOM trees and update the real DOM accordingly. This function is somewhat difficult to reason about without context, so I guess I've got some explaining to do!
+This will be the final function for our VDOM implementation. It's job will be to recursively determine the diff between two VDOM trees and update the real DOM accordingly. Unlike `diffProps()`, this function will perform DOM modifications as it does the diff, rather than returning a diff object.
+
+The algorithm is pretty simple, but it can still be somewhat difficult to reason about, so I've done my best to make the code super digestible. I'll also give you some quick background right now before we get to the code.
 
 First, here is the function signature:
 
@@ -249,77 +251,100 @@ First, here is the function signature:
 function updateDom(a, b, domParent, index) {}
 ```
 
-This is a recursive function, and it is important to recognize that, conceptually, we're only dealing with one node per iteration: The so-called "current node".
+This is a recursive function, and it is important to recognize that, conceptually, we're really only dealing with one node per iteration: The so-called "current node".
 
 - `a` is the current node in its _previous state_, as a VDOM object.
 - `b` is the current node in its _new state_, as a VDOM object. This is the "true" current node to which the real DOM should conform.
-- And `domParent.childNodes[index]` is the real-DOM object which corresponds to the current node's previous state, and which we wish to update.
+- And `domParent.childNodes[index]` is the real-DOM object which corresponds to the current node's previous state, and which we wish to update to match `b`.
 
-It is also important to note that, while these three things can be conceptualized as being the same imaginary "current node", `b` is likely to be "out of sync" with the other two and actually reference a completely different node. This can happen when nodes are added or removed, for example.
+It is also important to note that as nodes are added and removed, `b` is likely to be "out of sync" with `a` and `index`, possibly referencing a completely different node.
 
-So it may be more helpful to think of `b` as the current node's true state, while `a` and the DOM node referenced by `index` refer to what _used_ to be where `b` currently is in the tree, regardless of whether that's the current node the same state, in an older state, or a completely different node.
+I find it most helpful to remember that `b` is the current node's true state, while `a` and the DOM node referenced by `index` refer to what _used_ to be where `b` currently is in the tree, regardless of whether that's the current node the same state, in an older state, or a completely different node. The job of the algorithm is to modify the DOM to match `b`, no matter how out of sync they may have gotten.
 
-In the case that `a` and `b` aren't identical, we don't do anything fancy, we just discard the DOM node and replace it with the current node's new state.
-
-Hopefully this explanation makes it easier to follow! Let's get coding.
+I think we're ready to code this diff.
 
 ```js
 // Recursively update the contents of DOM node `domParent` according to the
 // diff between the previous VDOM node `a` and the new VDOM node `b`.
 // `index` is the position of `a` as a real-DOM node in the
 // `domParent.childNodes` array.
-function updateDom(a, b, domParent, index) {
-  // Store a reference to the DOM node we're currently dealing with.
+export function updateDom(a, b, domParent, index) {
+  const isTextNode = typeof b === "string"; // Is this a text node?
+  let typeChanged = false; // Did its type change? (div, p, li, etc.)
+  let updatedProps = null; // Which if any props changed?
+
+  // typeChanged and updatedProps are only needed for non-text nodes that
+  // previously existed and still exist.
+  if (!isTextNode && a && b) {
+    typeChanged = a[0] !== b[0];
+    if (!typeChanged) updatedProps = diffProps(a, b);
+  }
+
+  // Determine if and how this node was modified.
+  let modification = null;
+
+  // If there is no previous-state, then the current node is newly added.
+  if (!a) modification = "added";
+  // If there is no new-state, then the node was removed.
+  else if (!b) modification = "removed";
+  // If the node is an element and its type changed (div, p, li, etc.), or
+  // if it is a text node and its text changed, then the node was replaced.
+  else if (typeChanged || (isTextNode && a !== b)) modification = "replaced";
+  // If the node's type is the same but its properties changed,
+  // then the node was updated.
+  else if (!typeChanged && updatedProps) modification = "updated";
+
+  // Store a reference to the possibly existing DOM node, in case we need it.
   const domNode = domParent.childNodes[index];
 
-  // If there is no previous state, then the current node is entirely new.
-  if (!a) {
-    // If this is a text node, we can just add it directly to the DOM.
-    if (typeof b === "string") domParent.append(b);
-    // Otherwise, we need to create a new DOM node and add that.
-    else domParent.append(createDomNode(b));
+  // Update the DOM.
+  switch (modification) {
+    case "added":
+      // Add the node to the DOM. (There is no existing DOM node.)
+      domParent.append(createDomNode(b));
+      break;
+
+    case "removed":
+      // Remove the node from the DOM.
+      domNode.remove();
+      break;
+
+    case "replaced":
+      // Replace the existing DOM node with a new one.
+      domNode.replaceWith(createDomNode(b));
+      break;
+
+    case "updated":
+      // Update the node's props in-place, without re-creating the DOM node.
+      for (const prop in updatedProps) {
+        domNode[prop] = updatedProps[prop];
+      }
+      break;
   }
 
-  // If there is no new-state, then the current node was removed.
-  else if (!b) {
-    // So we remove it from the DOM.
-    domNode.remove();
-  }
+  // Recurse.
+  // If the node wasn't added, removed, or replaced, then we need to recurse
+  // and update any children it may have.
+  // (If it was added or replaced, then updated children were already created
+  // by createDomNode, and removed nodes obviously don't need fresh children.)
+  if (modification === null || modification === "updated") {
+    const oldChildren = a[2] ?? [];
+    const newChildren = b[2] ?? [];
 
-  // If the previous and new states are different, then the node changed.
-  else if (!equals(a, b)) {
-    // So we replace the old domNode with the updated current node.
-    if (typeof b === "string") domNode.replaceWith(b);
-    else domNode.replaceWith(createDomNode(b));
-  }
-
-  // If the current node wasn't removed, added, or changed, then we can recurse
-  // over the current node's children to apply any potential updates to them.
-  else {
-    // Assign names to the children arrays, for readability.
-    const childrenA = a[2];
-    const childrenB = b[2];
-
-    // Use the length of the longest array, to ensure we don't miss any nodes.
-    const length = Math.max(childrenA.length, childrenB.length);
-
-    // Iterate over and recursively update any children.
-    for (let i = 0; i < length; i++) {
-      updateDom(domNode, childrenA[i], childrenB[i], i);
+    for (let i = 0; i < Math.max(oldChildren.length, newChildren.length); i++) {
+      updateDom(oldChildren[i], newChildren[i], domNode, i);
     }
   }
 }
 ```
 
-Now we have everything we need for a functioning VDOM!
+Now we have everything we need for a functioning VDOM! Conceptually, this is almost the same approach that React uses for diffing, and it works really well.
 
-We could of course optimize our algorithm. For example, using string keys for lists of elements like React does would enable us to re-use perfectly good DOM nodes when sibling nodes are re-ordered, instead of throwing them out and completely re-building them just because they're in a different index position.
+We could always optimize it, of course. For example, currently, if we remove a node from a set of siblings, then all of the sibling DOM nodes after it in the list will be modified unnecessarily, due to their positions shifting by one. React handles this by using unique string keys for lists of elements rather than keeping track of them by numeric index relative to their siblings. This allows React to track list items across renders and only update their DOM objects if they actually change.
 
-Another optimization React uses is that it updates attributes/properties atomically when possible, rather than re-rendering the entire DOM node every time a property changes.
+I'll leave that as an exercise for you, though.
 
-I'll leave these optimizations as another exercise for you.
-
-The only thing left now is to make our VDOM do something interesting.
+The only thing left now is to put our little VDOM to the test.
 
 ## To-Do or Not To-Do
 
@@ -327,7 +352,7 @@ Let's do to-do. We'll keep it traditional.
 
 Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" front-end library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
 
-_(Don't expect anything too amazing. This is about implementing a VDOM, not a whole UI library.)_
+_(Don't expect anything too amazing! This article is about implementing a VDOM, not a real UI library.)_
 
 ```js
 // Create an app object to hold all of our internals.
