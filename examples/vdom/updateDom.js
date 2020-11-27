@@ -1,5 +1,5 @@
-import { createDomNode } from "./createDomNode";
-import { equals } from "./equals";
+import { createDomNode } from "./createDomNode.js";
+import { equals } from "./equals.js";
 
 // Recursively update the contents of DOM node `domParent` according to the
 // diff between the previous VDOM node `a` and the new VDOM node `b`.
@@ -34,15 +34,15 @@ export function updateDom(a, b, domParent, index) {
   // over the current node's children to apply any potential updates to them.
   else {
     // Assign names to the children arrays, for readability.
-    const childrenA = a[2];
-    const childrenB = b[2];
+    const childrenA = a[2] ?? [];
+    const childrenB = b[2] ?? [];
 
     // Use the length of the longest array, to ensure we don't miss any nodes.
     const length = Math.max(childrenA.length, childrenB.length);
 
     // Iterate over and recursively update any children.
     for (let i = 0; i < length; i++) {
-      updateDom(domNode, childrenA[i], childrenB[i], i);
+      updateDom(childrenA[i], childrenB[i], domNode, i);
     }
   }
 }
