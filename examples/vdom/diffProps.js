@@ -1,4 +1,4 @@
-// Return a map of properties that changed between `a` and `b`,
+// Return a map of properties that changed between VDOM nodes `a` and `b`,
 // or null if there were no changes.
 export function diffProps(a, b) {
   let changed = false;

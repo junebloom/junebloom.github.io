@@ -6,83 +6,69 @@ import { diffProps } from "./diffProps.js";
 // `index` is the position of `a` as a real-DOM node in the
 // `domParent.childNodes` array.
 export function updateDom(a, b, domParent, index) {
-  // Store a reference to the DOM node we're currently dealing with.
-  const domNode = domParent.childNodes[index];
+  const isTextNode = typeof b === "string"; // Is this a text node?
+  let typeChanged = false; // Did its type change? (div, p, li, etc.)
+  let updatedProps = null; // Which if any props changed?
 
-  // We need to know if b is a text node so we can update the DOM correctly.
-  const isTextNode = typeof b === "string";
+  // typeChanged and updatedProps are only needed for non-text nodes that
+  // previously existed and still exist.
+  if (!isTextNode && a && b) {
+    typeChanged = a[0] !== b[0];
+    if (!typeChanged) updatedProps = diffProps(a, b);
+  }
 
-  // We also need to know if the type of the node (div, p, li, etc.) changed.
-  let typeChanged = false;
-  if (!isTextNode && a && b) typeChanged = a[0] !== b[0];
-
-  // And we need to know which, if any, properties changed between a and b.
-  let updatedProps = null;
-  if (!isTextNode && !typeChanged && a && b) updatedProps = diffProps(a, b);
-
-  //
-  // Let's categorize any VDOM changes made. Note that these categories are
-  // mutually exclusive. Only one will be true.
-  //
+  // Determine if and how this node was modified.
+  let modification = null;
 
   // If there is no previous-state, then the current node is newly added.
-  const added = !a;
-
+  if (!a) modification = "added";
   // If there is no new-state, then the node was removed.
-  const removed = !b;
-
-  // If the node is an element and its type changed (div, p, li, etc.),
-  // or if it is a text node and its text changed, then the node was replaced.
-  const replaced = typeChanged || (isTextNode && a !== b);
-
+  else if (!b) modification = "removed";
+  // If the node is an element and its type changed (div, p, li, etc.), or
+  // if it is a text node and its text changed, then the node was replaced.
+  else if (typeChanged || (isTextNode && a !== b)) modification = "replaced";
   // If the node's type is the same but its properties changed,
   // then the node was updated.
-  const updated = !typeChanged && updatedProps;
+  else if (!typeChanged && updatedProps) modification = "updated";
 
-  //
-  // We are now ready to modify the DOM according to these changes.
-  //
+  // Store a reference to the possibly existing DOM node, in case we need it.
+  const domNode = domParent.childNodes[index];
 
-  // Add the node to the DOM.
-  if (added) {
-    // If this is a text node, we can just add it directly to the DOM.
-    if (isTextNode) domParent.append(b);
-    // Otherwise, we need to create a new DOM node and add that.
-    else domParent.append(createDomNode(b));
+  // Update the DOM.
+  switch (modification) {
+    case "added":
+      // Add the node to the DOM. (There is no existing DOM node.)
+      domParent.append(createDomNode(b));
+      break;
+
+    case "removed":
+      // Remove the node from the DOM.
+      domNode.remove();
+      break;
+
+    case "replaced":
+      // Replace the existing DOM node with a new one.
+      domNode.replaceWith(createDomNode(b));
+      break;
+
+    case "updated":
+      // Update the node's props in-place, without re-creating the DOM node.
+      for (const prop in updatedProps) {
+        domNode[prop] = updatedProps[prop];
+      }
+      break;
   }
 
-  // Remove the node from the DOM.
-  else if (removed) {
-    domNode.remove();
-  }
-
-  // Replace the existing DOM node with a new one.
-  else if (replaced) {
-    if (isTextNode) domNode.replaceWith(b);
-    else domNode.replaceWith(createDomNode(b));
-  }
-
-  // Update the node's properties in-place, without re-creating the DOM node.
-  else if (updated) {
-    for (const prop in updatedProps) {
-      domNode[prop] = updatedProps[prop];
-    }
-  }
-
+  // Recurse.
   // If the node wasn't added, removed, or replaced, then we need to recurse
-  // over the node's children to diff and update them.
-  // (If it _was_ added or replaced, then updated children were already created
-  // by createDomNode. And removed nodes obviously don't need fresh children.)
-  if (!added && !removed && !replaced) {
-    // Assign names to the children arrays, for readability.
+  // and update any children it may have.
+  // (If it was added or replaced, then updated children were already created
+  // by createDomNode, and removed nodes obviously don't need fresh children.)
+  if (modification === null || modification === "updated") {
     const oldChildren = a[2] ?? [];
     const newChildren = b[2] ?? [];
 
-    // Use the length of the longest array, to ensure we don't skip any children.
-    const length = Math.max(oldChildren.length, newChildren.length);
-
-    // Iterate over and recursively update any children.
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < Math.max(oldChildren.length, newChildren.length); i++) {
       updateDom(oldChildren[i], newChildren[i], domNode, i);
     }
   }
