@@ -15,7 +15,7 @@ export const TodoInput = ({ input, setInput, addTodo }) => {
     "div",
     {},
     [
-      ["input", { type: "text", oninput }, []],
+      ["input", { type: "text", value: input, oninput }, []],
       ["button", { onclick }, ["Add todo"]],
     ],
   ];
