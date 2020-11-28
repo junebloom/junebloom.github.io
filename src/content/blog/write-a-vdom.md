@@ -1,5 +1,5 @@
 ---
-title: Let's Code a Virtual DOM
+title: Let's Code a Virtual DOM from Scratch
 date: 2020-11-22
 ---
 
@@ -346,11 +346,9 @@ I'll leave that as an exercise for you, though.
 
 The only thing left now is to put our little VDOM to the test.
 
-## To-Do or Not To-Do
+## Todo or Not Todo
 
-Let's do to-do. We'll keep it traditional.
-
-Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" front-end library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
+Let's make a traditional todo example app, familiar to frontend engineers. Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" front-end library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
 
 _(Don't expect anything too amazing! This article is about implementing a VDOM, not a whole UI library.)_
 
@@ -394,7 +392,7 @@ function setState(callback) {
 render();
 ```
 
-Next we need to define the components for our app:
+Now we need to define the components for our app. For brevity, I'm omitting any styles, but a simple `classname` or `style` property is all it takes to unlock the full power of CSS styling in our little VDOM.
 
 ```js
 // First, a todo item component.
@@ -464,3 +462,18 @@ const TodoApp = (state, setState) => {
   ];
 };
 ```
+
+And with just a few easy steps, we have a fully functional todo app built with our very own virtual DOM. Check it out! Click a todo item to complete it. Add your own todos. Everything works.
+
+<iframe height="340" style="width: 100%;" scrolling="no" title="VDOM from Scratch: Todo" src="https://codepen.io/junebloom/embed/OJRPLeY?height=340&theme-id=dark&default-tab=result" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href='https://codepen.io/junebloom/pen/OJRPLeY'>VDOM from Scratch: Todo</a> by Juniper
+  (<a href='https://codepen.io/junebloom'>@junebloom</a>) on <a href='https://codepen.io'>CodePen</a>.
+</iframe>
+
+## Conclusion
+
+By this point we have explored why a virtual DOM can be useful, how to design the actual structure of a VDOM, how to reconcile that structure with the real DOM, and how these things relate to React.
+
+As engineers, understanding how our tools work is important. If we have deep knowledge of our tools, then we can use them in creative ways, we can avoid misusing them, we can hack them, we can build new ones, and we can simply better appreciate the hard work that goes in to making the things we may take for granted.
+
+I hope you learned something new or at least had fun!
