@@ -1,0 +1,1 @@
+These are the source files accompanying the virtual DOM implementation discussed in my article [Let's Code a Virtual DOM from Scratch](http://junebloom.github.io/blog/let's-code-a-virtual-dom-from-scratch/).
