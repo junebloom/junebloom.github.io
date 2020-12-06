@@ -26,11 +26,11 @@ The browser will parse this HTML into two DOM objects:
 - An [HTMLParagraphElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLParagraphElement) to represent the `<p></p>` tag,
 - and a [Text](https://developer.mozilla.org/en-US/docs/Web/API/Text) Node to represent the `Hello!`.
 
-Once the DOM is built, the browser uses it to actually render the page, but the most relevant part is that the browser exposes these DOM objects to us to manipulate via JavaScript. We can create, modify, and delete parts of the DOM from our JS code, an incredible power. But there's a problem.
+Once the DOM is built, the browser uses it to actually render the page and handle user interaction, but the most relevant part is that the browser exposes these DOM objects to us to manipulate via JavaScript. We can create, modify, and delete parts of the DOM from our JS code, an incredible power! We can make incredible dynamic content, games, whole applications! But there's a problem.
 
 ### Declarative _vs_ Imperative
 
-DOM manipulation with JS is _imperative_, whereas creating it with HTML is _declarative_. If you aren't familiar with these two styles of programming, the difference can be illustrated like so:
+The DOM manipulation APIs exposed to JS are _imperative_, while defining the DOM with HTML is _declarative_. If you aren't familiar with these two styles of programming, the difference can be illustrated like so:
 
 #### Declarative:
 
@@ -70,9 +70,9 @@ container.appendChild(title);
 container.appendChild(subtitle);
 ```
 
-Imperative programming is very necessary and important, but in many cases, declarative programming can be a nicer developer experience. Defining DOM structures is one of these cases.
+Imperative programming is very necessary and important, but in many cases, declarative programming can be a nicer developer experience and defining DOM structures is one of these cases.
 
-The role of a virtual DOM is to be the smart underlying code that knows how to deliver the results we desire. It allows us to create our page with all of the dynamic power of JavaScript, _declaratively_, and can even help us achieve optimal performance with our DOM updates. So how does it work?
+The role of a virtual DOM is to be the smart underlying code that knows how to deliver the results we desire. It allows us to create our page with all of the dynamic power of JavaScript, _declaratively_. So how does it work?
 
 ## The Anatomy of a Virtual DOM
 
@@ -347,11 +347,9 @@ export function updateDom(a, b, domParent, index) {
 }
 ```
 
-Now we have everything we need for a functioning virtual DOM! Conceptually, this is almost the same approach that React uses for diffing, and it works really well.
+Now we have everything we need for a functioning virtual DOM! Conceptually, this is similar to [the approach that React uses](https://reactjs.org/docs/reconciliation.html) for diffing, but React is perhaps _slightly_ [more sophisticated](https://github.com/acdlite/react-fiber-architecture) than what we've created.
 
-We could always add features or optimize it, of course. For example, currently, if we remove a node from a set of siblings, then all of the sibling DOM nodes after it in the list will be modified unnecessarily, due to their positions shifting by one. React handles this by optionally using unique string keys for lists of elements rather than keeping track of them by numeric index relative to their siblings. This allows React to track list items across renders and only update their DOM objects if they actually change.
-
-I'll leave that as an exercise for you, though.
+Notably we don't support string keys, which would allow us to avoid unnecessarily re-rendering a bunch of nodes when adding, moving, and removing a node in a list of siblings, but I'll leave that as an exercise for you.
 
 The only thing left now is to put our little VDOM to the test.
 
