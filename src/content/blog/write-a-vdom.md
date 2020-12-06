@@ -5,7 +5,9 @@ date: 2020-12-05
 
 Perhaps you're aware that React uses a "virtual DOM" (VDOM), and have wondered _"What does that actually mean?"_. There are perfectly concise answers to this question, but they're just, kind of uh, less-than-satisfying. Today we're going to answer this question a bit more deeply by coding a virtual DOM from scratch, so buckle up!
 
-There aren't a lot of situations where writing your own VDOM really makes sense, but it _is_ a pretty fun, and you will learn a lot about how React and similar libraries work. Let's get started.
+There aren't a lot of situations where writing your own VDOM really makes sense, but it _is_ a pretty fun, and you will learn a lot about how React and similar libraries work. Oh and as a bonus, we'll use our virtual DOM to make a todo app at the end.
+
+Let's get started!
 
 ## Refresher: What is the DOM?
 
@@ -485,3 +487,5 @@ By this point we have explored why a virtual DOM can be useful, how to design th
 As engineers, understanding how our tools work is important. If we have deep knowledge of our tools, then we can use them in creative ways, we can avoid misusing them, we can hack them, we can build new ones, and we can simply better appreciate the hard work that goes in to making the things we may take for granted.
 
 I hope you learned something new or at least had fun!
+
+_(You can find all of the code from this article [here](https://github.com/junebloom/junebloom.github.io/tree/main/examples/vdom).)_
