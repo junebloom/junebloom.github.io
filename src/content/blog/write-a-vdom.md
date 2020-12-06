@@ -86,7 +86,7 @@ Constructing a VDOM tree should be _fast_. The idea is that we can just re-compu
 
 ## The Virtual DOM Tree
 
-Okay, let's start coding! We need to be able to represent HTML elements in a way that is fast to recompute. For this, let's define a very simple structure:
+We need to be able to represent HTML elements in a way that is fast to recompute. For this, let's define a very simple structure:
 
 ```js
 // A text node.
@@ -347,19 +347,17 @@ export function updateDom(a, b, domParent, index) {
 }
 ```
 
-Now we have everything we need for a functioning virtual DOM! Conceptually, this is similar to [the approach that React uses](https://reactjs.org/docs/reconciliation.html) for diffing, but React is perhaps _slightly_ [more sophisticated](https://github.com/acdlite/react-fiber-architecture) than what we've created.
+Now we have everything we need for a functioning virtual DOM! Conceptually, this is similar to the [approach that React uses](https://reactjs.org/docs/reconciliation.html) for diffing, but in reality React is perhaps _slightly_ [more sophisticated](https://github.com/acdlite/react-fiber-architecture) than what we've created.
 
-Notably we don't support string keys, which would allow us to avoid unnecessarily re-rendering a bunch of nodes when adding, moving, and removing a node in a list of siblings, but I'll leave that as an exercise for you.
+We could of course always add features and optimizations. Notably, we don't support string keys, which would allow us to avoid unnecessarily re-rendering a bunch of nodes when adding, moving, and removing a node in a list of siblings.
 
-The only thing left now is to put our little VDOM to the test.
+But I don't want to do that. Instead, let's to put our little VDOM to the test.
 
 ## Bonus: Todo or Not Todo
 
-Let's make a traditional todo example app, familiar to frontend engineers. Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" frontend library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
+Let's do the "Hello, World!" of frontend engineering: the familiar todo app. Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" frontend library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
 
-_(Don't expect anything too amazing! This article is about implementing a VDOM, not a whole UI library.)_
-
-We need to define the components for our app. For brevity, I'm omitting any styles, but a simple `classname` or `style` property is all it takes to unlock the full power of CSS styling in our little VDOM.
+But first we need to define the components for our app. For brevity, I'm omitting any styles, but a simple `classname` or `style` property is all it takes to unlock the full power of CSS styling in our little VDOM.
 
 ```js
 // First, a todo item component.
@@ -430,7 +428,7 @@ const TodoApp = (state, setState) => {
 };
 ```
 
-Now we need to whip up some "improvised frontend library" glue to bring our VDOM to life.
+Now we need to whip up some "improvised frontend library" glue to bring our VDOM to life. _(Don't expect anything too amazing! This article is about implementing a VDOM, not a whole UI library.)_
 
 ```js
 // Set up the app internals for mounting to the DOM and handling updates.
@@ -484,6 +482,13 @@ By this point we have explored why a virtual DOM can be useful, how to design th
 
 As engineers, understanding how our tools work is important. If we have deep knowledge of our tools, then we can use them in creative ways, we can avoid misusing them, we can hack them, we can build new ones, and we can simply better appreciate the hard work that goes in to making the things we may take for granted.
 
-I hope you learned something new or at least had fun!
+I hope you learned something new or at least had fun! 💕
 
-_(You can find all of the code from this article [here](https://github.com/junebloom/junebloom.github.io/tree/main/examples/vdom).)_
+_(You can find the source for the implementations in this article [here](https://github.com/junebloom/junebloom.github.io/tree/main/examples/vdom).)_
+
+### Further Reading
+
+- [Introduction to the DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction) @ MDN
+- [React's take on virtual DOM](https://reactjs.org/docs/faq-internals.html) @ React Docs
+- [Reconciliation in React](https://reactjs.org/docs/reconciliation.html) @ React Docs
+- [React Fiber Architecture](https://github.com/acdlite/react-fiber-architecture) @ Andrew Clark
