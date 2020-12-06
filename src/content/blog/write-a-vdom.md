@@ -1,17 +1,17 @@
 ---
 title: Let's Code a Virtual DOM from Scratch
-date: 2020-11-22
+date: 2020-12-05
 ---
 
-I'm sure you've heard the term _virtual DOM_ (VDOM) before. You probably even know that libraries like React are designed around the concept, but maybe you don't know exactly what a VDOM is or how it works, and if so, you've come to the right place! We're going to explore the concept of "the VDOM" by actually coding one from scratch, so buckle up!
+Perhaps you're aware that React uses a "virtual DOM" (VDOM), and have wondered _"What does that actually mean?"_. There are perfectly concise answers to this question, but they're just, kind of uh, less-than-satisfying. Today we're going to answer this question a bit more deeply by coding a virtual DOM from scratch, so buckle up!
 
-For the average frontend engineer or web developer there aren't a lot of situations where writing your own VDOM makes sense, but it _is_ a really great learning experience that will help you understand what makes React work. Let's get started.
+There aren't a lot of situations where writing your own VDOM really makes sense, but it _is_ a pretty fun, and you will learn a lot about how React and similar libraries work. Let's get started.
 
-_(If you want to get straight to coding, just skip to the section The Anatomy of a VDOM.)_
+## Refresher: What is the DOM?
 
-## _What is the DOM, anyway?_
+_(Feel free to skip this section if you don't need the background.)_
 
-First, DOM stands for _Document Object Model_. It is the internal representation that all browsers use for HTML documents. Essentially, when a page loads, your browser parses the HTML source for the page and builds the DOM from it. An [Element]() or [Node]() object is created from every tag and piece of text content in the source.
+DOM stands for _Document Object Model_. It is the standardized internal representation (_model_) that all browsers use for XML/HTML _documents_. Essentially, when a page loads, your browser parses the HTML source for the page and builds the DOM from it. An [Element](https://developer.mozilla.org/en-US/docs/Web/API/Element) or other [Node](https://developer.mozilla.org/en-US/docs/Web/API/Node) _object_ is created from every tag, comment, piece of text content, etc. in the source.
 
 Take this HTML snippet for example:
 
@@ -21,28 +21,32 @@ Take this HTML snippet for example:
 
 The browser will parse this HTML into two DOM objects:
 
-- An Element to represent the `<p></p>` tag,
-- and a text Node to represent the `Hello!`.
+- An [HTMLParagraphElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLParagraphElement) to represent the `<p></p>` tag,
+- and a [Text](https://developer.mozilla.org/en-US/docs/Web/API/Text) Node to represent the `Hello!`.
 
-### DOM Manipulation
+Once the DOM is built, the browser uses it to actually render the page, but the most relevant part is that the browser exposes these DOM objects to us to manipulate via JavaScript. We can create, modify, and delete parts of the DOM from our JS code, an incredible power. But there's a problem.
 
-Once the DOM is built, the browser uses it to actually render the page, but the most relevant part is that the browser exposes these DOM objects to us to manipulate via JavaScript. We can create, modify, and delete parts of the DOM from our JS code, an incredible power. JQuery is a library that dominated the web for a long time, and it was (mis)used to directly manipulate the DOM in all sorts of (terrifying) ways.
+### Declarative _vs_ Imperative
 
-The thing about manipulating the DOM is that it's just kind of slow, and if you aren't careful, you can cause huge portions of the page to be re-rendered unnecessarily, making your page painfully janky, and all around unpleasant to use.
+DOM manipulation with JS is _imperative_, whereas creating it with HTML is _declarative_. If you aren't familiar with these two styles of programming, the difference can be illustrated like so:
 
-### Imperative _vs_ Declarative
+#### Declarative:
 
-The other problem is that manipulating the DOM with JavaScript is done _imperatively_, whereas creating it with HTML is done _declaratively_. If you aren't familiar with these two styles of programming, the difference can be illustrated like this:
+> I would like a peanut butter and banana sandwich, please!
 
-- Declarative: _"I would like a peanut butter and banana sandwich please."_
+#### Imperative:
 
-- Imperative: _"Get a plate. Get a knife. Get two slices of bread. Put the bread on the plate. Slice the banana into 16 pieces with the knife. Spread one ounce of peanut butter on each slice of bread. Place 8 banana slices on each slice of bread. Place the two slices of bread together. Give me the plate."_
+> Get a plate. Get a knife. Get two slices of bread. Put the bread on the plate. Slice the banana into 16 pieces with the knife. Spread one ounce of peanut butter on each slice of bread. Place 8 banana slices on each slice of bread. Place the two slices of bread together. Give me the plate.
 
-Basically, declarative code states the desired result and depends on some underlying code to be smart enough to figure out how to deliver it, whereas imperative code states a series of commands to follow to produce the desired result. Take a look at a real example:
+Basically, declarative code states the desired result and depends on some underlying code to be smart enough to figure out how to deliver it, whereas imperative code states a series of commands to follow to produce the desired result.
+
+Take a look at a real example, where we accomplish the same thing using both paradigms:
 
 ```html
-<!-- This HTML code is declarative.
-The browser "just knows" how to deliver the desired result. -->
+<!--
+This HTML code is declarative. The browser knows how to interpret and deliver
+the desired result.
+-->
 <div>
   <h1>Juniper</h1>
   <h2>Software Engineer</h2>
@@ -51,7 +55,8 @@ The browser "just knows" how to deliver the desired result. -->
 
 ```js
 // This JS code is imperative.
-// We're giving explicit instructions for the browser to follow.
+// We're giving explicit instructions for the browser to follow to produce
+// the desired result.
 const container = document.createElement("div");
 const title = document.createElement("h1");
 const subtitle = document.createElement("h2");
@@ -63,21 +68,21 @@ container.appendChild(title);
 container.appendChild(subtitle);
 ```
 
-In general, declarative programming is a nicer developer experience. Now, remember how I said _"declarative code states the desired result and depends on some underlying code to be smart enough to figure out how to deliver it"_?
+Imperative programming is very necessary and important, but in many cases, declarative programming can be a nicer developer experience. Defining DOM structures is one of these cases.
 
-A virtual DOM is that smart underlying code. It allows us to create our page with all of the power of JavaScript, _declaratively_, and even helps us achieve optimal performance with our DOM updates. So how does it work?
+The role of a virtual DOM is to be the smart underlying code that knows how to deliver the results we desire. It allows us to create our page with all of the dynamic power of JavaScript, _declaratively_, and can even help us achieve optimal performance with our DOM updates. So how does it work?
 
-## The Anatomy of a VDOM
+## The Anatomy of a Virtual DOM
 
 There are two main parts of a VDOM implementation.
 
-- There is the **VDOM tree** itself, which is just a representation (a _model_) of the elements that make up the document tree,
+- There is the **VDOM tree** itself, which is just a representation of the elements that make up the document tree,
 
-- and there is an **algorithm**, which takes the VDOM tree and turns it into actual DOM nodes for the browser to render.
+- and there is a **diffing algorithm**, which takes the VDOM tree and turns it into actual DOM nodes for the browser to render.
 
-Constructing a VDOM tree should be _fast_. The idea is that we can just re-compute the entire VDOM every time something on the page changes, and then our algorithm will figure out an efficient way to update the actual DOM to match.
+Constructing a VDOM tree should be _fast_. The idea is that we can just re-compute the entire VDOM every time something on the page changes, and then our diffing algorithm will figure out an efficient way to update the actual DOM to match.
 
-### The VDOM Tree
+## The Virtual DOM Tree
 
 Okay, let's start coding! We need to be able to represent HTML elements in a way that is fast to recompute. For this, let's define a very simple structure:
 
@@ -93,7 +98,7 @@ const text = "Hello, VDOM!";
 const element = ["a", { href: "https://..." }, [text]];
 ```
 
-With this humble structure, we can declaratively model any document tree we desire:
+Using these humble building blocks, we can declaratively model any document tree we desire:
 
 ```js
 const page = [
@@ -116,12 +121,12 @@ const page = [
 
 This kind of representation is very similar to what React uses, except React uses objects instead of arrays, and provides a `createElement` function to generate those objects, and most people use JSX, which hides the `createElement` calls behind a compile step, allowing you to write VDOM structures using XML-like syntax similar to HTML. But other than that, just like React!
 
-We could even write a simple function for the JSX compiler to compile to, allowing us to use JSX with our VDOM, but I'll leave that as an exercise for you.
+_(If we wanted, we could write a simple function for the JSX compiler to compile to, allowing us to use JSX to create our VDOM structures, but I'll leave that as an exercise for you.)_
 
-Now that we have a defined VDOM structure, we can write reusable functions to compose these structures:
+Now that we have defined what our VDOM structure should look like, we can write reusable functions to compose these structures:
 
 ```js
-// A generic page component to wrap our content with a header and footer
+// A generic "page" component to wrap our content with a header and footer
 const Page = (children) => [
   "div",
   {},
@@ -139,14 +144,14 @@ const Page = (children) => [
   ],
 ];
 
-// Home page component
+// A home page
 const HomePage = () =>
   Page([
     ["h1", {}, ["Welcome to my page!"]],
     ["p", {}, ["I hope you enjoy it here."]],
   ]);
 
-// About page component
+// An about page
 const AboutPage = () =>
   Page([
     ["h1", {}, ["About Me"]],
@@ -154,44 +159,46 @@ const AboutPage = () =>
   ]);
 ```
 
-Starting to look familiar? Kind of reminds you of React's functional components, doesn't it?
+Starting to look familiar? Reminds you a little bit of React's functional components, doesn't it?
 
-## The VDOM Algorithm
+## The Diffing Algorithm
 
-Now we just need an algorithm that can take our VDOM tree and update the actual DOM to reflect its content. This algorithm is of course the cold, imperative, robot heart of our virtual DOM. It makes our declarative code do something instead of nothing; a desirable feature.
+Tree structure defined, we just need an algorithm that can take our VDOM tree and update the actual DOM to reflect its content. This algorithm is of course the cold, imperative, robot heart of our virtual DOM. It makes our declarative code do something instead of nothing; a desirable feature.
 
-Our algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will then use this diff to determine which DOM nodes to modify, and which ones to leave as they are.
+Our algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will use this diff to determine which DOM nodes to modify, and which ones to leave as they are.
 
 ### Starting Small
 
-Before we tackle diffing an entire tree, it would be useful to get our diffing-feet wet with an easier subproblem. We will need to know what properties of a single VDOM node have changed from one update to the next, so that we can atomically update just those properties if possible, rather than throwing out the whole real-DOM node and rebuilding it when a value changes.
+Before we tackle diffing an entire tree, it would be useful to get our diffing-feet wet with an easier subproblem.
+
+We will need to know what properties of a single VDOM node have changed from one update to the next, so that we can atomically update just those properties if possible, rather than throwing out the whole real-DOM node and rebuilding it when a value changes.
 
 Let's write a simple `diffProps` function to identify those changes.
 
 ```js
 // Shallowly compare the props of VDOM nodes `a` and `b`,
 // returning a map of changes, or null if there were no changes.
-function diffProps(a, b) {
-  const propsA = a[1];
-  const propsB = b[1];
+export function diffProps(a, b) {
+  const oldProps = a[1];
+  const newProps = b[1];
 
   const diff = {};
   let changed = false;
 
   // Iterate over the props of each element and compare them, starting with a.
-  for (const prop in propsA) {
+  for (const prop in oldProps) {
     // This will catch any props that were updated or removed between a and b.
-    if (propsA[prop] !== propsB[prop]) {
-      diff[prop] = propsB[prop];
+    if (oldProps[prop] !== newProps[prop]) {
+      diff[prop] = newProps[prop];
       changed = true;
     }
   }
 
   // Now iterate over b's props.
-  for (const prop in propsB) {
+  for (const prop in newProps) {
     // This catches any new props of b that weren't present on a.
-    if (propsA[prop] === undefined) {
-      diff[prop] = propsB[prop];
+    if (oldProps[prop] === undefined) {
+      diff[prop] = newProps[prop];
       changed = true;
     }
   }
@@ -206,7 +213,7 @@ You may have noticed that we only compare props one layer deep. This is for simp
 
 ### Creating Real DOM Nodes
 
-We need a function that can turn a VDOM node into something we can attach to the real DOM. Easy enough.
+We need a function that can turn a VDOM node into something we can attach to the real DOM. This one's easy.
 
 ```js
 // Create and return a real DOM node for the given VDOM node, recursively
@@ -241,9 +248,9 @@ This function just creates the DOM node. Actually attaching it to the DOM will b
 
 ### Dealing with Diffing
 
-This will be the final function for our VDOM implementation. It's job will be to recursively determine the diff between two VDOM trees and update the real DOM accordingly. Unlike `diffProps()`, this function will perform DOM modifications as it does the diff, rather than returning a diff object.
+This will be the final function for our VDOM implementation. It's job will be to recursively determine the diff between two VDOM trees and update the real DOM accordingly. Unlike `diffProps()`, this function will directly perform DOM modifications while it does the diff, rather than returning a diff object.
 
-The algorithm is pretty simple, but it can still be somewhat difficult to reason about, so I've done my best to make the code super digestible. I'll also give you some quick background right now before we get to the code.
+The algorithm is pretty simple, but it can still be somewhat difficult to reason about, so I've done my best to make the code super digestible. I'll also give you a little background before we get to the code.
 
 First, here is the function signature:
 
@@ -261,7 +268,7 @@ It is also important to note that as nodes are added and removed, `b` is likely 
 
 I find it most helpful to remember that `b` is the current node's true state, while `a` and the DOM node referenced by `index` refer to what _used_ to be where `b` currently is in the tree, regardless of whether that's the current node the same state, in an older state, or a completely different node. The job of the algorithm is to modify the DOM to match `b`, no matter how out of sync they may have gotten.
 
-I think we're ready to code this diff.
+Let's code!
 
 ```js
 // Recursively update the contents of DOM node `domParent` according to the
@@ -338,61 +345,21 @@ export function updateDom(a, b, domParent, index) {
 }
 ```
 
-Now we have everything we need for a functioning VDOM! Conceptually, this is almost the same approach that React uses for diffing, and it works really well.
+Now we have everything we need for a functioning virtual DOM! Conceptually, this is almost the same approach that React uses for diffing, and it works really well.
 
-We could always add features or optimize it, of course. For example, currently, if we remove a node from a set of siblings, then all of the sibling DOM nodes after it in the list will be modified unnecessarily, due to their positions shifting by one. React handles this by using unique string keys for lists of elements rather than keeping track of them by numeric index relative to their siblings. This allows React to track list items across renders and only update their DOM objects if they actually change.
+We could always add features or optimize it, of course. For example, currently, if we remove a node from a set of siblings, then all of the sibling DOM nodes after it in the list will be modified unnecessarily, due to their positions shifting by one. React handles this by optionally using unique string keys for lists of elements rather than keeping track of them by numeric index relative to their siblings. This allows React to track list items across renders and only update their DOM objects if they actually change.
 
 I'll leave that as an exercise for you, though.
 
 The only thing left now is to put our little VDOM to the test.
 
-## Todo or Not Todo
+## Bonus: Todo or Not Todo
 
-Let's make a traditional todo example app, familiar to frontend engineers. Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" front-end library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
+Let's make a traditional todo example app, familiar to frontend engineers. Since we've only written a VDOM, we don't have any of the fancy fluff like state or update handling that a "real" frontend library or framework might provide, so we'll have to get our hands dirty and do some more DIY.
 
 _(Don't expect anything too amazing! This article is about implementing a VDOM, not a whole UI library.)_
 
-```js
-// Set up the app internals for mounting to the DOM and handling updates.
-const app = {
-  // This is the DOM element to mount the VDOM to.
-  root: document.getElementById("app"),
-
-  // This is a functional component that returns the VDOM tree for our app.
-  // (We'll define it below.)
-  component: TodoApp,
-
-  // For state, we'll just use an object.
-  state: {
-    todos: [],
-    input: "",
-  },
-
-  // Store our VDOM so we can diff it when we perform updates.
-  vdom: null,
-};
-
-// Renders the app's VDOM and updates the real DOM to match.
-function render() {
-  // Compute the VDOM.
-  const old = app.vdom;
-  app.vdom = app.component(getState, setState);
-
-  // Update the real DOM.
-  updateDom(old, app.vdom, app.root, 0);
-}
-
-// Updates the state and triggers a render.
-function setState(callback) {
-  app.state = callback(app.state);
-  render();
-}
-
-// Perform the initial render.
-render();
-```
-
-Now we need to define the components for our app. For brevity, I'm omitting any styles, but a simple `classname` or `style` property is all it takes to unlock the full power of CSS styling in our little VDOM.
+We need to define the components for our app. For brevity, I'm omitting any styles, but a simple `classname` or `style` property is all it takes to unlock the full power of CSS styling in our little VDOM.
 
 ```js
 // First, a todo item component.
@@ -463,7 +430,48 @@ const TodoApp = (state, setState) => {
 };
 ```
 
-And with just a few easy steps, we have a fully functional todo app built with our very own virtual DOM. Check it out! Click a todo item to complete it. Add your own todos. Everything works.
+Now we need to whip up some "improvised frontend library" glue to bring our VDOM to life.
+
+```js
+// Set up the app internals for mounting to the DOM and handling updates.
+const app = {
+  // This is the DOM element to mount the VDOM to.
+  root: document.getElementById("app"),
+
+  // This is a functional component that returns the VDOM tree for our app.
+  component: TodoApp,
+
+  // For state, we'll just use an object.
+  state: {
+    todos: [],
+    input: "",
+  },
+
+  // Store our VDOM so we can diff it when we perform updates.
+  vdom: null,
+};
+
+// Renders the app's VDOM and updates the real DOM to match.
+function render() {
+  // Compute the VDOM.
+  const old = app.vdom;
+  app.vdom = app.component(getState, setState);
+
+  // Update the real DOM.
+  updateDom(old, app.vdom, app.root, 0);
+}
+
+// Updates the state and triggers a render.
+function setState(callback) {
+  app.state = callback(app.state);
+  render();
+}
+
+// Perform the initial render.
+render();
+```
+
+And in just a few easy steps, we have a fully functional todo app built with our very own virtual DOM. Check it out! Click a todo item to complete it. Add your own todos. Everything works.
 
 <iframe height="340" style="width: 100%;" scrolling="no" title="VDOM from Scratch: Todo" src="https://codepen.io/junebloom/embed/OJRPLeY?height=340&theme-id=dark&default-tab=result" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href='https://codepen.io/junebloom/pen/OJRPLeY'>VDOM from Scratch: Todo</a> by Juniper
