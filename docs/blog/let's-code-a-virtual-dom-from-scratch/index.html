@@ -44,15 +44,15 @@ subtitle<span class="token punctuation">.</span>innerText <span class="token ope
 
 container<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>title<span class="token punctuation">)</span><span class="token punctuation">;</span>
 container<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>subtitle<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div>
-<p>Imperative programming is very necessary and important, but in many cases, declarative programming can be a nicer developer experience and defining DOM structures is one of these cases.</p>
-<p>The role of a virtual DOM is to be the smart underlying code that knows how to deliver the results we desire. It allows us to create our page with all of the dynamic power of JavaScript, <em>declaratively</em>. So how does it work?</p>
+<p>Imperative programming is very necessary and important, but in the case of defining DOM structures, the declarative approach is a subjectively nicer developer experience.</p>
+<p>The role of a virtual DOM is to allow us to write complex user interfaces with all of the dynamic power of JavaScript, <em>declaratively</em>. So how does it work?</p>
 <h2>The Anatomy of a Virtual DOM</h2>
 <p>There are two main parts of a VDOM implementation.</p>
 <ul>
 <li>There is the <strong>VDOM tree</strong> itself, which is just a representation of the elements that make up the document tree,</li>
-<li>and there is a <strong>diffing algorithm</strong>, which takes the VDOM tree and turns it into actual DOM nodes for the browser to render.</li>
+<li>and there is a <strong>reconciliation algorithm</strong>, which takes the VDOM tree and turns it into actual DOM nodes that the browser understands.</li>
 </ul>
-<p>Constructing a VDOM tree should be <em>fast</em>. The idea is that we can just re-compute the entire VDOM every time something on the page changes, and then our diffing algorithm will figure out an efficient way to update the actual DOM to match.</p>
+<p>Constructing a VDOM tree should be <em>fast</em>. The idea is that we can just re-compute the entire VDOM every time something on the page changes, and then our reconciliation algorithm will figure out an efficient way to update the actual DOM to match.</p>
 <h2>The Virtual DOM Tree</h2>
 <p>We need to be able to represent HTML elements in a way that is fast to recompute. For this, let's define a very simple structure:</p>
 <div class="gatsby-highlight" data-language="js"><pre class="language-js"><code class="language-js"><span class="token comment">// A text node.</span>
@@ -116,9 +116,9 @@ container<span class="token punctuation">.</span><span class="token function">ap
     <span class="token punctuation">[</span><span class="token string">"p"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token string">"I like my DOMs virtual!"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
   <span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div>
 <p>Starting to look familiar? Reminds you a little bit of React's functional components, doesn't it?</p>
-<h2>The Diffing Algorithm</h2>
+<h2>The Algorithm</h2>
 <p>Tree structure defined, we just need an algorithm that can take our VDOM tree and update the actual DOM to reflect its content. This algorithm is of course the cold, imperative, robot heart of our virtual DOM. It makes our declarative code do something instead of nothing; a desirable feature.</p>
-<p>Our algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will use this diff to determine which DOM nodes to modify, and which ones to leave as they are.</p>
+<p>Our reconciliation algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will use this diff to determine which DOM nodes to modify, and which ones to leave as they are.</p>
 <h3>Starting Small</h3>
 <p>Before we tackle diffing an entire tree, it would be useful to get our diffing-feet wet with an easier subproblem.</p>
 <p>We will need to know what properties of a single VDOM node have changed from one update to the next, so that we can atomically update just those properties if possible, rather than throwing out the whole real-DOM node and rebuilding it when a value changes.</p>

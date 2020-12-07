@@ -70,9 +70,9 @@ container.appendChild(title);
 container.appendChild(subtitle);
 ```
 
-Imperative programming is very necessary and important, but in many cases, declarative programming can be a nicer developer experience and defining DOM structures is one of these cases.
+Imperative programming is very necessary and important, but in the case of defining DOM structures, the declarative approach is a subjectively nicer developer experience.
 
-The role of a virtual DOM is to be the smart underlying code that knows how to deliver the results we desire. It allows us to create our page with all of the dynamic power of JavaScript, _declaratively_. So how does it work?
+The role of a virtual DOM is to allow us to write complex user interfaces with all of the dynamic power of JavaScript, _declaratively_. So how does it work?
 
 ## The Anatomy of a Virtual DOM
 
@@ -80,9 +80,9 @@ There are two main parts of a VDOM implementation.
 
 - There is the **VDOM tree** itself, which is just a representation of the elements that make up the document tree,
 
-- and there is a **diffing algorithm**, which takes the VDOM tree and turns it into actual DOM nodes for the browser to render.
+- and there is a **reconciliation algorithm**, which takes the VDOM tree and turns it into actual DOM nodes that the browser understands.
 
-Constructing a VDOM tree should be _fast_. The idea is that we can just re-compute the entire VDOM every time something on the page changes, and then our diffing algorithm will figure out an efficient way to update the actual DOM to match.
+Constructing a VDOM tree should be _fast_. The idea is that we can just re-compute the entire VDOM every time something on the page changes, and then our reconciliation algorithm will figure out an efficient way to update the actual DOM to match.
 
 ## The Virtual DOM Tree
 
@@ -163,11 +163,11 @@ const AboutPage = () =>
 
 Starting to look familiar? Reminds you a little bit of React's functional components, doesn't it?
 
-## The Diffing Algorithm
+## The Algorithm
 
 Tree structure defined, we just need an algorithm that can take our VDOM tree and update the actual DOM to reflect its content. This algorithm is of course the cold, imperative, robot heart of our virtual DOM. It makes our declarative code do something instead of nothing; a desirable feature.
 
-Our algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will use this diff to determine which DOM nodes to modify, and which ones to leave as they are.
+Our reconciliation algorithm will work by finding the difference (diff) between two VDOM trees. One tree represents the previous state of the document, and the other tree represents the new state of the document. The algorithm will use this diff to determine which DOM nodes to modify, and which ones to leave as they are.
 
 ### Starting Small
 
